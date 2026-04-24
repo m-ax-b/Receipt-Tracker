@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Receipts - Receipt Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --panel: #ffffff;
+            --panel-alt: #f9fafc;
+            --text: #172033;
+            --muted: #5f6b85;
+            --border: #dbe1ea;
+            --accent: #405cf5;
+            --accent-soft: #eef2ff;
+            --success: #177245;
+            --success-soft: #eaf8f0;
+            --warning: #9a6700;
+            --warning-soft: #fff6df;
+            --danger: #b42318;
+            --danger-soft: #fff0ef;
+            --shadow: 0 8px 28px rgba(19, 33, 68, 0.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #f8f9fd 0%, #f1f4fa 100%);
+            color: var(--text);
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .btn,
+        a.btn,
+        a.btn:visited,
+        button {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+            padding: 10px 14px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--border) !important;
+            background: #ffffff !important;
+            color: #172033 !important;
+            -webkit-text-fill-color: #172033 !important;
+            text-decoration: none !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            cursor: pointer !important;
+        }
+
+        .btn-primary,
+        a.btn-primary,
+        a.btn-primary:visited,
+        button.btn-primary {
+            background: #eef2ff !important;
+            color: #243b8f !important;
+            -webkit-text-fill-color: #243b8f !important;
+            border-color: #cfd8ff !important;
+        }
+
+        .btn-danger,
+        a.btn-danger,
+        a.btn-danger:visited,
+        button.btn-danger {
+            background: #fff0ef !important;
+            color: #b42318 !important;
+            -webkit-text-fill-color: #b42318 !important;
+            border-color: #f2c8c5 !important;
+        }
+
+        .btn-soft,
+        a.btn-soft,
+        a.btn-soft:visited,
+        button.btn-soft {
+            background: #f5f7ff !important;
+            color: #405cf5 !important;
+            -webkit-text-fill-color: #405cf5 !important;
+            border-color: #d7e1ff !important;
+        }
+
+        .btn-small,
+        a.btn-small,
+        button.btn-small {
+            min-height: 36px !important;
+            padding: 8px 10px !important;
+            border-radius: 10px !important;
+            font-size: 13px !important;
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #243b8f 0%, #405cf5 45%, #6c7cff 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            margin: 0;
+            color: rgba(255,255,255,0.88);
+            max-width: 920px;
+        }
+
+        .notice {
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            background: var(--accent-soft);
+            color: #263b9f;
+            border: 1px solid #d7e1ff;
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 320px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .stack {
+            display: grid;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 18px 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel-alt);
+        }
+
+        .card-header h2,
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .stat {
+            background: var(--panel-alt);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .helper {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .toolbar-left,
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .selected-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: var(--warning-soft);
+            border: 1px solid #f4df9f;
+            color: var(--warning);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 920px;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #edf1f6;
+        }
+
+        th {
+            background: #f8faff;
+            font-size: 0.84rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .receipt-link {
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .badge-soft {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: #dbe4ff;
+        }
+
+        .badge-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: #caebd8;
+        }
+
+        .badge-warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: #f4df9f;
+        }
+
+        .badge-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: #f4c7c3;
+        }
+
+        .empty {
+            color: var(--muted);
+            padding: 18px;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.6);
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #405cf5;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function getReceiptCheckboxes() {
+            var nodes = document.getElementsByName("receipt_ids");
+            var boxes = [];
+            var i;
+
+            for (i = 0; i < nodes.length; i += 1) {
+                if (nodes[i] && nodes[i].type === "checkbox") {
+                    boxes.push(nodes[i]);
+                }
+            }
+
+            return boxes;
+        }
+
+        function getSelectedReceiptCount() {
+            var boxes = getReceiptCheckboxes();
+            var count = 0;
+            var i;
+
+            for (i = 0; i < boxes.length; i += 1) {
+                if (boxes[i].checked) {
+                    count += 1;
+                }
+            }
+
+            return count;
+        }
+
+        function updateReceiptSelectionUi() {
+            var count = getSelectedReceiptCount();
+            var countEl = document.getElementById("selected-count");
+            var master = document.getElementById("select-all");
+            var boxes = getReceiptCheckboxes();
+
+            if (countEl) {
+                countEl.innerHTML = String(count);
+            }
+
+            if (!master) {
+                return;
+            }
+
+            if (boxes.length === 0) {
+                master.checked = false;
+                master.indeterminate = false;
+                return;
+            }
+
+            if (count === 0) {
+                master.checked = false;
+                master.indeterminate = false;
+            } else if (count === boxes.length) {
+                master.checked = true;
+                master.indeterminate = false;
+            } else {
+                master.checked = false;
+                master.indeterminate = true;
+            }
+        }
+
+        function toggleAllReceiptCheckboxes(masterCheckbox) {
+            var boxes = getReceiptCheckboxes();
+            var i;
+            var shouldCheck = !!(masterCheckbox && masterCheckbox.checked);
+
+            for (i = 0; i < boxes.length; i += 1) {
+                boxes[i].checked = shouldCheck;
+            }
+
+            updateReceiptSelectionUi();
+        }
+
+        function confirmBulkDelete() {
+            var count = getSelectedReceiptCount();
+
+            if (count === 0) {
+                window.alert("Select at least one receipt to delete.");
+                return false;
+            }
+
+            return window.confirm(
+                "Delete " + count + " selected receipt(s)? This also removes associated artifact packages, learning observations, and clears proposals."
+            );
+        }
+
+        function receiptQueueInit() {
+            updateReceiptSelectionUi();
+        }
+    </script>
+</head>
+<body onload="receiptQueueInit()">
+    <div class="page">
+        <div class="nav">
+            <div class="brand">Receipt Tracker</div>
+            <div class="nav-links">
+                <a class="btn" href="/">Home</a>
+                <a class="btn" href="/upload">Upload</a>
+                <a class="btn" href="/analytics">Analytics</a>
+                <a class="btn btn-primary" href="/learning/proposals">Learning</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>Receipt Queue & Cleanup</h1>
+            <p>
+                Review imported receipts, open individual records, and bulk-delete unwanted early test data.
+                Bulk deletion also removes associated artifact packages and learning observations, then clears proposals so they can be regenerated cleanly.
+            </p>
+        </div>
+
+        {% if notice %}
+            <div class="notice">{{ notice }}</div>
+        {% endif %}
+
+        <div class="grid">
+            <div class="stack">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Queue Summary</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-grid">
+                            <div class="stat">
+                                <div class="stat-label">Total Receipts</div>
+                                <div class="stat-value">{{ summary.total_count }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Approved</div>
+                                <div class="stat-value">{{ summary.approved_count }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Rejected</div>
+                                <div class="stat-value">{{ summary.rejected_count }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">In Review</div>
+                                <div class="stat-value">{{ summary.in_review_count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Cleanup Notes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="helper">
+                            Select receipts you no longer want, then delete them in a batch. This is safer than manually wiping the whole database because it also cleans associated artifacts and learning rows.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stack">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Receipts</h2>
+                    </div>
+                    <div class="card-body">
+                        {% if receipts %}
+                            <form id="bulk-delete-form" action="/receipts/bulk-delete" method="post" onsubmit="return confirmBulkDelete();">
+                                <div class="toolbar">
+                                    <div class="toolbar-left">
+                                        <label class="selected-pill" for="select-all">
+                                            <input type="checkbox" id="select-all" onchange="toggleAllReceiptCheckboxes(this);">
+                                            Select all visible
+                                        </label>
+                                        <div class="selected-pill">
+                                            Selected:
+                                            <span id="selected-count">0</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="toolbar-right">
+                                        <a class="btn btn-soft" href="/upload">Upload More</a>
+                                        <button id="bulk-delete-button" type="submit" class="btn btn-danger">
+                                            Delete Selected
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-wrap">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 48px;">Pick</th>
+                                                <th>Receipt</th>
+                                                <th>Merchant</th>
+                                                <th>Purchase Date</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                                <th>Artifact</th>
+                                                <th>Created</th>
+                                                <th style="width: 100px;">Open</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for receipt in receipts %}
+                                                <tr>
+                                                    <td>
+                                                        <input
+                                                            type="checkbox"
+                                                            name="receipt_ids"
+                                                            value="{{ receipt.id }}"
+                                                            onchange="updateReceiptSelectionUi();"
+                                                        >
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <a class="receipt-link" href="/receipts/{{ receipt.id }}">Receipt {{ receipt.id }}</a>
+                                                        </div>
+                                                        <div class="muted">{{ receipt.image_path }}</div>
+                                                    </td>
+                                                    <td>{{ receipt.merchant_canonical or receipt.merchant_raw or "-" }}</td>
+                                                    <td>{{ receipt.purchase_date or "-" }}</td>
+                                                    <td>
+                                                        {% if receipt.total is not none %}
+                                                            {{ receipt.total }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if receipt.status == "approved" %}
+                                                            <span class="badge badge-success">Approved</span>
+                                                        {% elif receipt.status == "rejected" %}
+                                                            <span class="badge badge-danger">Rejected</span>
+                                                        {% else %}
+                                                            <span class="badge badge-warning">{{ receipt.status }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-soft">{{ receipt.artifact_id or "-" }}</span>
+                                                    </td>
+                                                    <td>{{ receipt.created_at or "-" }}</td>
+                                                    <td>
+                                                        <a class="btn btn-small btn-primary" href="/receipts/{{ receipt.id }}">Open</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="empty">
+                                No receipts are currently stored. Upload a new receipt to begin building a cleaner dataset.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Learning Engine - Receipt Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --panel: #ffffff;
+            --panel-alt: #f9fafc;
+            --text: #172033;
+            --muted: #5f6b85;
+            --border: #dbe1ea;
+            --accent: #405cf5;
+            --accent-soft: #eef2ff;
+            --success: #177245;
+            --success-soft: #eaf8f0;
+            --warning: #9a6700;
+            --warning-soft: #fff6df;
+            --danger: #b42318;
+            --danger-soft: #fff0ef;
+            --shadow: 0 8px 28px rgba(19, 33, 68, 0.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+        html { color-scheme: light; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #f8f9fd 0%, #f1f4fa 100%);
+            color: var(--text);
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .btn,
+        a.btn,
+        a.btn:visited,
+        button,
+        input[type="submit"],
+        input[type="button"] {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+            padding: 10px 14px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--border) !important;
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #172033 !important;
+            -webkit-text-fill-color: #172033 !important;
+            text-decoration: none !important;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            letter-spacing: 0 !important;
+            text-indent: 0 !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+            filter: none !important;
+            white-space: nowrap !important;
+            cursor: pointer !important;
+            box-shadow: none !important;
+            visibility: visible !important;
+        }
+
+        .btn *,
+        a.btn *,
+        button *,
+        input[type="submit"] *,
+        input[type="button"] * {
+            color: inherit !important;
+            -webkit-text-fill-color: inherit !important;
+        }
+
+        .btn:hover,
+        a.btn:hover,
+        button:hover,
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(24, 39, 75, 0.08) !important;
+        }
+
+        .btn:focus,
+        a.btn:focus,
+        button:focus,
+        input[type="submit"]:focus,
+        input[type="button"]:focus {
+            outline: 2px solid rgba(64, 92, 245, 0.25) !important;
+            outline-offset: 2px !important;
+        }
+
+        .btn-primary,
+        a.btn-primary,
+        button.btn-primary,
+        input[type="submit"].btn-primary,
+        input[type="button"].btn-primary {
+            background: #eef2ff !important;
+            color: #243b8f !important;
+            -webkit-text-fill-color: #243b8f !important;
+            border-color: #cfd8ff !important;
+        }
+
+        .btn-success,
+        a.btn-success,
+        button.btn-success,
+        input[type="submit"].btn-success,
+        input[type="button"].btn-success {
+            background: #eaf8f0 !important;
+            color: #177245 !important;
+            -webkit-text-fill-color: #177245 !important;
+            border-color: #caebd8 !important;
+        }
+
+        .btn-danger,
+        a.btn-danger,
+        button.btn-danger,
+        input[type="submit"].btn-danger,
+        input[type="button"].btn-danger {
+            background: #fff0ef !important;
+            color: #b42318 !important;
+            -webkit-text-fill-color: #b42318 !important;
+            border-color: #f2c8c5 !important;
+        }
+
+        .btn-soft,
+        a.btn-soft,
+        button.btn-soft,
+        input[type="submit"].btn-soft,
+        input[type="button"].btn-soft {
+            background: #f5f7ff !important;
+            color: #405cf5 !important;
+            -webkit-text-fill-color: #405cf5 !important;
+            border-color: #d7e1ff !important;
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #243b8f 0%, #405cf5 45%, #6c7cff 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .hero-grid {
+            display: flex;
+            gap: 18px;
+            align-items: stretch;
+            flex-wrap: nowrap;
+        }
+
+        .hero-main {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .hero-side {
+            flex: 0 0 340px;
+            min-width: 300px;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+            line-height: 1.05;
+        }
+
+        .hero-subtitle {
+            margin: 0 0 14px 0;
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            line-height: 1.55;
+            max-width: 860px;
+        }
+
+        .stage-note {
+            display: inline-block;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.10);
+            color: rgba(255,255,255,0.94);
+            font-size: 0.94rem;
+            line-height: 1.45;
+        }
+
+        .hero-callout {
+            height: 100%;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 18px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-callout h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.05rem;
+        }
+
+        .hero-callout p {
+            margin: 0 0 14px 0;
+            color: rgba(255,255,255,0.92);
+            line-height: 1.55;
+            font-size: 0.94rem;
+        }
+
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #ffffff;
+            font-size: 0.83rem;
+            font-weight: 700;
+        }
+
+        .notice,
+        .error {
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+        }
+
+        .notice {
+            background: var(--accent-soft);
+            color: #263b9f;
+            border: 1px solid #d7e1ff;
+        }
+
+        .error {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #f2c8c5;
+        }
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            margin: 0 0 6px 0;
+            font-size: 1.25rem;
+        }
+
+        .section-subtitle {
+            margin: 0 0 16px 0;
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 0.96rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .kpi-card,
+        .loop-card,
+        .why-card,
+        .control-card,
+        .example-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-card {
+            padding: 18px;
+        }
+
+        .kpi-label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .kpi-helper {
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.45;
+        }
+
+        .strip-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 6px;
+        }
+
+        .strip-scroll::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .strip-scroll::-webkit-scrollbar-thumb {
+            background: #d7deec;
+            border-radius: 999px;
+        }
+
+        .loop-strip {
+            display: flex;
+            gap: 12px;
+            flex-wrap: nowrap;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        .loop-card {
+            flex: 0 0 220px;
+            padding: 16px;
+        }
+
+        .why-strip {
+            display: flex;
+            gap: 12px;
+            flex-wrap: nowrap;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        .why-card {
+            flex: 0 0 31.5%;
+            min-width: 280px;
+            padding: 16px;
+        }
+
+        .loop-step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .loop-card h3,
+        .why-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .loop-card p,
+        .why-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+            font-size: 0.94rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .control-card {
+            padding: 18px;
+        }
+
+        .control-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .control-card p {
+            margin: 0 0 14px 0;
+            color: var(--muted);
+            line-height: 1.5;
+            font-size: 0.94rem;
+        }
+
+        .field-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field-grid.two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        label {
+            display: grid;
+            gap: 6px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font: inherit;
+            background: white;
+            color: var(--text);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        .proposal-stack {
+            display: grid;
+            gap: 16px;
+        }
+
+        .proposal-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .proposal-header {
+            padding: 16px 18px 12px 18px;
+            background: linear-gradient(180deg, #fcfdff 0%, #f7f9fd 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .proposal-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .badge-soft {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: #dbe4ff;
+        }
+
+        .badge-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: #caebd8;
+        }
+
+        .badge-warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: #f4df9f;
+        }
+
+        .badge-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: #f4c7c3;
+        }
+
+        .proposal-title {
+            margin: 0 0 6px 0;
+            font-size: 1.16rem;
+        }
+
+        .proposal-subtitle {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .proposal-body {
+            padding: 18px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .proposal-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 14px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            background: var(--panel-alt);
+            border-radius: 16px;
+            padding: 14px;
+        }
+
+        .panel h4 {
+            margin: 0 0 10px 0;
+            font-size: 0.96rem;
+        }
+
+        .panel p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 0.94rem;
+        }
+
+        .plain-list {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--text);
+        }
+
+        .plain-list li {
+            margin: 0 0 6px 0;
+            line-height: 1.45;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .mini-stat {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--panel-alt);
+        }
+
+        .mini-stat-label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .mini-stat-value {
+            font-size: 1rem;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        .runtime-effect {
+            border: 1px solid #d8e2ff;
+            background: linear-gradient(180deg, #f7f9ff 0%, #eef3ff 100%);
+            border-radius: 16px;
+            padding: 14px;
+            color: #263b9f;
+            line-height: 1.55;
+            font-size: 0.94rem;
+        }
+
+        .proposal-footer {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding-top: 4px;
+        }
+
+        .state-note {
+            color: var(--muted);
+            font-size: 0.93rem;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            background: var(--panel);
+            border: 1px dashed #cfd8eb;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.08rem;
+        }
+
+        .empty-state p {
+            margin: 0 0 14px 0;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .example-card {
+            padding: 16px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .example-card h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .example-meta {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .example-row {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            background: var(--panel-alt);
+            border-radius: 12px;
+        }
+
+        .example-label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+
+        .example-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        details {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 16px 18px;
+            font-weight: 800;
+            list-style: none;
+            background: var(--panel-alt);
+            border-bottom: 1px solid var(--border);
+        }
+
+        summary::-webkit-details-marker { display: none; }
+
+        .detail-body {
+            padding: 18px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: top;
+            font-size: 0.94rem;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.79rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 800;
+            background: #fafbfd;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .footer-links {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 1100px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .example-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .evidence-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .why-card {
+                flex-basis: 320px;
+            }
+        }
+
+        @media (max-width: 920px) {
+            .proposal-grid,
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .field-grid.two,
+            .example-grid,
+            .kpi-grid,
+            .evidence-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-grid {
+                flex-direction: column;
+            }
+
+            .hero-side {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set repair_total =
+        (summary.repair_merge_observation_count or 0)
+        + (summary.repair_suppression_observation_count or 0)
+        + (summary.repair_manual_add_observation_count or 0)
+    %}
+    {% set fragment_ready_total = summary.repair_fragment_observation_count or 0 %}
+    {% set fragment_ready_receipts = summary.repair_fragment_receipt_count or 0 %}
+    {% set pending_repair_hints = summary.pending_suppression_proposal_count or 0 %}
+    {% set active_repair_hints = summary.approved_suppression_proposal_count or 0 %}
+    {% set recognized_repair_patterns_total = summary.recognized_repair_pattern_count or 0 %}
+    {% set ready_repair_patterns = summary.ready_repair_pattern_count or 0 %}
+    {% set seedable_repair_patterns = summary.seedable_repair_pattern_count or 0 %}
+    {% set seeded_pending_repair_hints = summary.seeded_pending_suppression_proposal_count or 0 %}
+    {% set seeded_active_repair_hints = summary.seeded_approved_suppression_proposal_count or 0 %}
+    {% set recorded_decision_runs = summary.recorded_suggestion_run_count or 0 %}
+    {% set decision_run_receipts = summary.latest_suggestion_run_receipt_count or 0 %}
+    {% set latest_review_item_count = summary.latest_total_review_item_count or 0 %}
+    {% set local_handled_count = summary.latest_local_handled_count or 0 %}
+    {% set local_resolution_rate = summary.latest_local_resolution_rate_pct or 0 %}
+    {% set openclaw_routed_count = summary.latest_openclaw_routed_count or 0 %}
+    {% set human_repair_actions = summary.latest_human_repair_action_count or 0 %}
+    {% set approval_outcome_count = summary.latest_approval_outcome_count or 0 %}
+    {% set knowledge_capture_count = summary.latest_knowledge_captured_count or 0 %}
+    {% set openclaw_invocation_count = summary.openclaw_invocation_count or 0 %}
+    {% set openclaw_success_rate = summary.openclaw_success_rate_pct or 0 %}
+    {% set openclaw_avg_latency = summary.openclaw_avg_latency_ms or 0 %}
+    {% set openclaw_total_items_sent = summary.openclaw_total_items_sent or 0 %}
+    {% set openclaw_total_returned = summary.openclaw_total_returned or 0 %}
+    {% set openclaw_structured_count = summary.openclaw_structured_invocation_count or 0 %}
+    {% set openclaw_category_count = summary.openclaw_category_invocation_count or 0 %}
+    {% set openclaw_ocr_count = summary.openclaw_ocr_invocation_count or 0 %}
+    {% set openclaw_agent_count = summary.openclaw_distinct_agent_count or 0 %}
+    {% set openclaw_model_count = summary.openclaw_distinct_model_count or 0 %}
+    {% set ai_touched_count = summary.latest_ai_touched_item_count or 0 %}
+    {% set ai_accepted_count = summary.latest_ai_accepted_item_count or 0 %}
+    {% set ai_acceptance_rate = summary.latest_ai_acceptance_rate_pct or 0 %}
+    {% set ai_no_repair_count = summary.latest_ai_no_repair_item_count or 0 %}
+    {% set ai_no_repair_rate = summary.latest_ai_no_repair_rate_pct or 0 %}
+    {% set ai_repaired_after_count = summary.latest_ai_repaired_after_item_count or 0 %}
+    {% set ai_repaired_after_rate = summary.latest_ai_repaired_after_rate_pct or 0 %}
+    {% set ai_assisted_receipt_count = summary.latest_ai_assisted_receipt_count or 0 %}
+    {% set ai_backed_learning_count = summary.ai_backed_learning_observation_count or 0 %}
+    {% set ai_backed_learning_no_repair_count = summary.ai_backed_learning_no_repair_count or 0 %}
+    {% set ai_backed_learning_receipt_count = summary.ai_backed_learning_receipt_count or 0 %}
+    {% set ai_backed_learning_rate = summary.ai_backed_learning_rate_pct or 0 %}
+
+    <div class="page">
+        <div class="nav">
+            <div class="brand">Receipt Tracker</div>
+            <div class="nav-links">
+                <a class="btn" href="/">Home</a>
+                <a class="btn" href="/upload">Upload</a>
+                <a class="btn" href="/receipts">Receipts</a>
+                <a class="btn" href="/analytics">Analytics</a>
+                <a class="btn btn-primary" href="/learning/proposals">Learning</a>
+            </div>
+        </div>
+
+        <section class="hero">
+            <div class="hero-grid">
+                <div class="hero-main">
+                    <h1>Governed Learning Engine</h1>
+                    <p class="hero-subtitle">
+                        This receipt demo proves a broader evidence-learning pattern: deterministic extraction handles the obvious,
+                        OpenClaw orchestrates fit-for-purpose AI where ambiguity remains, and approved outcomes become reusable knowledge.
+                    </p>
+                    <div class="stage-note">
+                        <strong>Current stage:</strong> receipt-domain prototype demonstrating governed learning, selective AI use,
+                        and reusable knowledge formation. Receipts are the proving ground for a broader evidence-learning architecture.
+                    </div>
+                </div>
+
+                <div class="hero-side">
+                    <div class="hero-callout">
+                        <h2>Why OpenClaw</h2>
+                        <p>
+                            OpenClaw serves as the selective AI orchestration layer in the loop. It lets the system call fit-for-purpose
+                            models only where deterministic logic and existing learned knowledge are insufficient, while keeping the
+                            overall workflow governed and reusable.
+                        </p>
+                        <div class="chip-row">
+                            <span class="hero-chip">Selective AI orchestration</span>
+                            <span class="hero-chip">Fit-for-purpose model choice</span>
+                            <span class="hero-chip">Reusable governed workflow</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {% if notice %}
+            <div class="notice">{{ notice }}</div>
+        {% endif %}
+
+        <section class="section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Observed Evidence</div>
+                    <div class="kpi-value">{{ summary.observed_item_observation_count or 0 }}</div>
+                    <div class="kpi-helper">Approved receipt corrections captured as reusable evidence.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Pending Proposals</div>
+                    <div class="kpi-value">{{ summary.pending_proposal_count or 0 }}</div>
+                    <div class="kpi-helper">Includes conservative reusable bundles waiting for human approval. Pending repair hints: {{ pending_repair_hints }}. Analyst-seeded pending repair hints: {{ seeded_pending_repair_hints }}.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Approved Reusable Knowledge</div>
+                    <div class="kpi-value">{{ summary.approved_proposal_count or 0 }}</div>
+                    <div class="kpi-helper">Approved patterns that can now be reused during future review. Active repair hints: {{ active_repair_hints }}. Analyst-seeded active repair hints: {{ seeded_active_repair_hints }}.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Recognized Repair Patterns</div>
+                    <div class="kpi-value">{{ recognized_repair_patterns_total }}</div>
+                    <div class="kpi-helper">Real fragment families surfaced from captured repair evidence. Auto-ready: {{ ready_repair_patterns }}. Analyst-seedable below threshold: {{ seedable_repair_patterns }}. Human corrections captured: {{ repair_total }} total, with {{ fragment_ready_total }} fragment-ready observation(s) across {{ fragment_ready_receipts }} receipt(s).</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Decision Runs Recorded</div>
+                    <div class="kpi-value">{{ recorded_decision_runs }}</div>
+                    <div class="kpi-helper">Latest telemetry is currently available for {{ decision_run_receipts }} receipt(s). Rollups below use the most recent recorded suggestion run per receipt so repeated reruns do not inflate the headline numbers.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Local Resolution Rate</div>
+                    <div class="kpi-value">{{ '%.1f'|format(local_resolution_rate) }}%</div>
+                    <div class="kpi-helper">{{ local_handled_count }} of {{ latest_review_item_count }} latest review item(s) were handled before OpenClaw. Routed onward for selective AI help: {{ openclaw_routed_count }}.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Human Repair Actions</div>
+                    <div class="kpi-value">{{ human_repair_actions }}</div>
+                    <div class="kpi-helper">Across {{ approval_outcome_count }} latest approved outcome snapshot(s): manual adds {{ summary.latest_manual_add_count or 0 }}, merge actions {{ summary.latest_manual_merge_action_count or 0 }}, suppress actions {{ summary.latest_manual_suppression_action_count or 0 }}.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Knowledge Captured</div>
+                    <div class="kpi-value">{{ knowledge_capture_count }}</div>
+                    <div class="kpi-helper">Latest approved outcomes currently account for {{ summary.latest_active_item_count or 0 }} active line(s), {{ summary.latest_suppressed_item_count or 0 }} suppressed line(s), and {{ knowledge_capture_count }} reusable approved item observation(s).</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">AI-Backed Knowledge</div>
+                    <div class="kpi-value">{{ ai_backed_learning_count }}</div>
+                    <div class="kpi-helper">Accepted AI outcomes now captured as reusable approved observations: {{ ai_backed_learning_count }} across {{ ai_backed_learning_receipt_count }} approved receipt(s). That is {{ '%.1f'|format(ai_backed_learning_rate) }}% of all observed reusable evidence.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">AI Invocation Success</div>
+                    <div class="kpi-value">{{ '%.1f'|format(openclaw_success_rate) }}%</div>
+                    <div class="kpi-helper">This is transport health, not answer quality. Successful OpenClaw invocation records: {{ summary.openclaw_success_invocation_count or 0 }}. Failed invocation records: {{ summary.openclaw_failure_invocation_count or 0 }}. Total invocation records: {{ openclaw_invocation_count }}. Average latency: {{ openclaw_avg_latency }} ms.</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">AI Acceptance Rate</div>
+                    <div class="kpi-value">{{ '%.1f'|format(ai_acceptance_rate) }}%</div>
+                    <div class="kpi-helper">Across latest approved outcomes, {{ ai_accepted_count }} of {{ ai_touched_count }} AI-touched item(s) were retained in the final approved result. AI materially helped {{ ai_assisted_receipt_count }} approved receipt(s).</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">AI No-Repair Resolution</div>
+                    <div class="kpi-value">{{ '%.1f'|format(ai_no_repair_rate) }}%</div>
+                    <div class="kpi-helper">AI-touched items approved without later merge/suppress cleanup: {{ ai_no_repair_count }} of {{ ai_touched_count }}. Later repaired after AI: {{ ai_repaired_after_count }} item(s) ({{ '%.1f'|format(ai_repaired_after_rate) }}%).</div>
+                </div>
+            </div>
+
+            {% if ai_touched_count > 0 %}
+                <details class="section-spacer">
+                    <summary>AI effectiveness by lane</summary>
+                    <div class="evidence-grid" style="margin-top: 12px;">
+                        {% for card in summary.latest_ai_lane_cards or [] %}
+                            {% if card.touched or card.accepted or card.repaired_after %}
+                                <div class="mini-stat">
+                                    <div class="mini-stat-label">{{ card.label }}</div>
+                                    <div class="mini-stat-value">{{ card.accepted }}/{{ card.touched }}</div>
+                                    <div class="helper">Accepted {{ '%.1f'|format(card.acceptance_rate_pct or 0) }}% · No-repair {{ card.no_repair }} · Repaired after AI {{ card.repaired_after }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if ai_backed_learning_count > 0 %}
+                <details class="section-spacer">
+                    <summary>AI → knowledge by lane and model strategy</summary>
+                    <div class="detail-body">
+                        <div class="helper" style="margin-bottom: 12px;">
+                            These rollups show which OpenClaw lanes and model strategies produced accepted outputs that were then captured back into reusable approved observations.
+                        </div>
+
+                        <div class="evidence-grid">
+                            {% for card in summary.ai_learning_lane_cards or [] %}
+                                {% if card.captured %}
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">{{ card.label }}</div>
+                                        <div class="mini-stat-value">{{ card.captured }}</div>
+                                        <div class="helper">Knowledge share {{ '%.1f'|format(card.capture_share_pct or 0) }}% · No-repair {{ card.no_repair }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% if summary.ai_learning_strategy_cards %}
+                            <div class="example-grid" style="margin-top: 14px;">
+                                {% for card in summary.ai_learning_strategy_cards %}
+                                    <div class="example-card">
+                                        <div>
+                                            <h3>{{ card.model_label or 'OpenClaw strategy' }}</h3>
+                                            <div class="example-meta">{{ card.subtitle }}</div>
+                                        </div>
+                                        <div class="example-row">
+                                            <div class="example-label">Knowledge captured</div>
+                                            <div class="example-value">{{ card.captured }}</div>
+                                        </div>
+                                        <div class="example-row">
+                                            <div class="example-label">No-repair retained</div>
+                                            <div class="example-value">{{ card.no_repair }}</div>
+                                        </div>
+                                        <div class="badge-row">
+                                            <span class="badge badge-soft">Knowledge share {{ '%.1f'|format(card.capture_share_pct or 0) }}%</span>
+                                            <span class="badge badge-soft">No-repair {{ '%.1f'|format(card.no_repair_rate_pct or 0) }}%</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </details>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">How the loop works</h2>
+            <p class="section-subtitle">
+                The system does not jump straight to AI. It moves from evidence capture to governed reuse through a deliberate loop.
+            </p>
+
+            <div class="strip-scroll">
+                <div class="loop-strip">
+                    <div class="loop-card">
+                        <div class="loop-step">1</div>
+                        <h3>Observe</h3>
+                        <p>Approved rows and repair actions become evidence that can be reused later.</p>
+                    </div>
+
+                    <div class="loop-card">
+                        <div class="loop-step">2</div>
+                        <h3>Reason with OpenClaw</h3>
+                        <p>AI is used only when deterministic logic and existing learned patterns are insufficient, then routed into explicit review lanes with agent/model telemetry.</p>
+                    </div>
+
+                    <div class="loop-card">
+                        <div class="loop-step">3</div>
+                        <h3>Propose</h3>
+                        <p>Repeated evidence becomes conservative reusable bundles instead of silent automatic mutation.</p>
+                    </div>
+
+                    <div class="loop-card">
+                        <div class="loop-step">4</div>
+                        <h3>Approve</h3>
+                        <p>Human approval remains the trust boundary before anything becomes active runtime knowledge.</p>
+                    </div>
+
+                    <div class="loop-card">
+                        <div class="loop-step">5</div>
+                        <h3>Reuse</h3>
+                        <p>Approved bundles guide future review, reduce repetitive cleanup, and lower unnecessary AI calls.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="strip-scroll">
+                <div class="why-strip">
+                    <div class="why-card">
+                        <h3>Selective AI, not AI everywhere</h3>
+                        <p>
+                            The system does not send everything to a model. It uses deterministic logic first, then learned patterns,
+                            then OpenClaw only for unresolved ambiguity.
+                        </p>
+                    </div>
+
+                    <div class="why-card">
+                        <h3>Human-governed activation</h3>
+                        <p>
+                            The system can observe and propose, but it does not silently promote patterns into production behavior.
+                        </p>
+                    </div>
+
+                    <div class="why-card">
+                        <h3>Reusable knowledge compounds</h3>
+                        <p>
+                            Approved bundles reduce repetitive cleanup and improve consistency over time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="controls-grid">
+                <div class="control-card">
+                    <h3>Filter the current view</h3>
+                    <p>Use filters to focus on one merchant or one proposal state without regenerating anything.</p>
+
+                    <form method="get" action="/learning/proposals" class="field-grid">
+                        <div class="field-grid two">
+                            <label>
+                                Merchant
+                                <input type="text" name="merchant" value="{{ merchant_scope_input or '' }}" placeholder="Example: Big Y">
+                            </label>
+
+                            <label>
+                                Status
+                                <select name="status">
+                                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All</option>
+                                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                                    <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="min_confirmations" value="{{ min_confirmations or 2 }}">
+
+                        <div class="actions">
+                            <button type="submit" class="btn btn-primary">Apply View</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="control-card">
+                    <h3>Generate conservative proposals</h3>
+                    <p>
+                        Generate new conservative proposals from repeated approved evidence. Higher confirmation thresholds make the
+                        system more cautious.
+                    </p>
+
+                    <form method="post" action="/learning/proposals/generate" class="field-grid">
+                        <div class="field-grid two">
+                            <label>
+                                Merchant Scope
+                                <input type="text" name="merchant_scope" value="{{ merchant_scope_input or '' }}" placeholder="Blank = all merchants">
+                            </label>
+
+                            <label>
+                                Minimum Confirmations
+                                <input type="number" name="min_confirmations" min="2" step="1" value="{{ min_confirmations or 2 }}">
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="status_filter" value="{{ status_filter or 'all' }}">
+
+                        <div class="actions">
+                            <button type="submit" class="btn btn-success">Generate Conservative Proposals</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="control-card">
+                    <h3>Decision telemetry rollups</h3>
+                    <p>
+                        The telemetry cards above use the latest recorded suggestion run per receipt and the latest
+                        approved outcome snapshot per receipt. That keeps the executive-facing numbers useful even if
+                        you rerun review on the same receipt while iterating.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Recognized Repair Patterns</h2>
+            <p class="section-subtitle">
+                These fragment families were recognized from real repair evidence already captured during review. Auto-ready patterns can be surfaced in batch,
+                while below-threshold patterns can still be promoted into governed review deliberately without weakening the
+                automatic proposal threshold.
+            </p>
+
+            {% if recognized_repair_patterns %}
+                <div class="proposal-stack">
+                    {% for recognized in recognized_repair_patterns %}
+                        {% set source_receipt_counts = recognized.source_receipt_counts or {} %}
+                        {% set source_observation_counts = recognized.source_observation_counts or {} %}
+                        {% set suppression_receipt_count = source_receipt_counts.get('repair_suppression', 0) %}
+                        {% set merge_receipt_count = source_receipt_counts.get('repair_merge_source', 0) %}
+                        {% set suppression_observation_count = source_observation_counts.get('repair_suppression', 0) %}
+                        {% set merge_observation_count = source_observation_counts.get('repair_merge_source', 0) %}
+                        <article class="proposal-card" id="recognized-{{ recognized.pattern_key|replace('|', '-')|replace('<', '')|replace('>', '')|replace('/', '-') }}">
+                            <div class="proposal-header">
+                                <div class="proposal-top">
+                                    <div>
+                                        <h3 class="proposal-title">{{ recognized.pattern.hint_label or 'Likely fragment line' }}</h3>
+                                        <div class="proposal-subtitle">
+                                            {{ recognized.merchant_key or 'Unknown merchant' }} · {{ recognized.pattern.pattern_kind or 'fragment pattern' }}
+                                        </div>
+                                    </div>
+
+                                    <div class="badge-row">
+                                        <span class="badge badge-soft">Recognized Pattern</span>
+                                        {% if recognized.proposal_status == 'approved' %}
+                                            <span class="badge badge-success">Approved Proposal Exists</span>
+                                        {% elif recognized.proposal_status == 'pending' %}
+                                            <span class="badge badge-warning">Pending Proposal Exists</span>
+                                        {% elif recognized.proposal_status == 'rejected' %}
+                                            <span class="badge badge-danger">Rejected Proposal Exists</span>
+                                        {% elif recognized.ready_for_auto %}
+                                            <span class="badge badge-success">Auto-Ready</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">Below Auto Threshold</span>
+                                        {% endif %}
+                                        {% if recognized.can_seed %}
+                                            <span class="badge badge-soft">Analyst Seed Available</span>
+                                        {% endif %}
+                                        {% if recognized.existing_is_seeded %}
+                                            <span class="badge badge-soft">Existing Proposal Is Seeded</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="proposal-body">
+                                <div class="proposal-grid">
+                                    <div class="panel">
+                                        <h4>Observed fragment variants</h4>
+                                        <ul class="plain-list">
+                                            {% for raw_variant in recognized.raw_variants %}
+                                                <li>{{ raw_variant }}</li>
+                                            {% endfor %}
+                                        </ul>
+
+                                        <h4 style="margin-top: 12px;">Evidence sources</h4>
+                                        <ul class="plain-list">
+                                            {% if suppression_receipt_count or suppression_observation_count %}
+                                                <li>Manual suppressions · receipts: {{ suppression_receipt_count }} · observations: {{ suppression_observation_count }}</li>
+                                            {% endif %}
+                                            {% if merge_receipt_count or merge_observation_count %}
+                                                <li>Merge-source fragments · receipts: {{ merge_receipt_count }} · observations: {{ merge_observation_count }}</li>
+                                            {% endif %}
+                                            {% if not (suppression_receipt_count or suppression_observation_count or merge_receipt_count or merge_observation_count) %}
+                                                <li>Recognized from repair evidence</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+
+                                    <div class="panel">
+                                        <h4>Why this matters</h4>
+                                        <p>
+                                            The system has enough structural signal to recognize this fragment family locally.
+                                            {% if recognized.ready_for_auto %}
+                                                It already meets the current auto-proposal threshold of {{ min_confirmations or 2 }} confirmation(s).
+                                            {% else %}
+                                                It is still below the current auto-proposal threshold of {{ min_confirmations or 2 }} confirmation(s),
+                                                but it may still be worth promoting into governed review deliberately.
+                                            {% endif %}
+                                        </p>
+
+                                        {% if not recognized.ready_for_auto %}
+                                            <h4 style="margin-top: 12px;">Auto-threshold gap</h4>
+                                            <p>
+                                                {% if recognized.receipt_shortfall %}
+                                                    Needs {{ recognized.receipt_shortfall }} more distinct receipt(s)
+                                                {% endif %}
+                                                {% if recognized.receipt_shortfall and recognized.artifact_shortfall %}
+                                                    and
+                                                {% endif %}
+                                                {% if recognized.artifact_shortfall %}
+                                                    {{ recognized.artifact_shortfall }} more artifact(s)
+                                                {% endif %}
+                                                before it would auto-surface at the current threshold.
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="evidence-grid">
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Receipts</div>
+                                        <div class="mini-stat-value">{{ recognized.distinct_receipt_count }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Artifacts</div>
+                                        <div class="mini-stat-value">{{ recognized.distinct_artifact_count }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Observations</div>
+                                        <div class="mini-stat-value">{{ recognized.evidence_observation_count }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Raw Variants</div>
+                                        <div class="mini-stat-value">{{ recognized.raw_variant_count }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="runtime-effect">
+                                    <strong>Runtime effect if approved:</strong>
+                                    Similar fragment lines can be flagged locally as suggested suppress before OpenClaw, without
+                                    silently deleting anything.
+                                </div>
+
+                                <div class="proposal-footer">
+                                    {% if recognized.proposal_id %}
+                                        <a class="btn btn-primary" href="#proposal-{{ recognized.proposal_id }}">View Existing Proposal</a>
+                                        <span class="state-note">This recognized pattern already has a governed proposal.</span>
+                                    {% elif recognized.ready_for_auto %}
+                                        <span class="state-note">Ready for automatic proposal generation. Use Generate Conservative Proposals to surface it.</span>
+                                    {% elif recognized.can_seed %}
+                                        <form method="post" action="/learning/proposals/suppression-patterns/seed">
+                                            <input type="hidden" name="pattern_merchant_key" value="{{ recognized.merchant_key }}">
+                                            <input type="hidden" name="pattern_key" value="{{ recognized.pattern_key }}">
+                                            <input type="hidden" name="merchant_scope" value="{{ merchant_scope_input or '' }}">
+                                            <input type="hidden" name="min_confirmations" value="{{ min_confirmations or 2 }}">
+                                            <input type="hidden" name="status_filter" value="{{ status_filter or 'all' }}">
+                                            <button type="submit" class="btn btn-soft">Create Pending Proposal</button>
+                                        </form>
+                                        <span class="state-note">Promote this low-volume pattern into governed review without weakening the auto threshold.</span>
+                                    {% else %}
+                                        <span class="state-note">Recognized from repair evidence.</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No recognized repair patterns yet</h3>
+                    <p>
+                        Once repeated merge-source fragments or manual suppressions start collapsing into reusable structural
+                        families, they will appear here even before they all auto-surface as proposals.
+                    </p>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Governed Reuse Proposals</h2>
+            <p class="section-subtitle">
+                Some proposals are surfaced automatically from repeated evidence. Others are intentionally seeded from recognized
+                real repair patterns. In both cases, approval remains the trust boundary before anything becomes active runtime knowledge.
+            </p>
+
+            {% if proposals %}
+                <div class="proposal-stack">
+                    {% for proposal in proposals %}
+                        {% set is_mapping = proposal.proposal_type == 'item_mapping_bundle' %}
+                        {% set is_alias = proposal.proposal_type == 'item_alias_bundle' %}
+                        {% set is_suppression = proposal.proposal_type == 'suppression_pattern' %}
+                        {% set status_value = proposal.status or 'pending' %}
+                        {% set confidence_value = proposal.confidence or 'medium' %}
+                        {% set evidence_receipts = proposal.evidence.get('distinct_receipt_count', proposal.evidence_count or 0) %}
+                        {% set evidence_artifacts = proposal.evidence.get('distinct_artifact_count', 0) %}
+                        {% set evidence_observations = proposal.evidence.get('observation_ids', [])|length if proposal.evidence.get('observation_ids') else (proposal.evidence_count or 0) %}
+                        {% set raw_variant_count = proposal.raw_variants|length if proposal.raw_variants else 0 %}
+                        {% set source_receipt_counts = proposal.source_receipt_counts or proposal.evidence.get('source_receipt_counts', {}) %}
+                        {% set source_observation_counts = proposal.source_observation_counts or proposal.evidence.get('source_observation_counts', {}) %}
+                        {% set suppression_receipt_count = source_receipt_counts.get('repair_suppression', 0) %}
+                        {% set merge_receipt_count = source_receipt_counts.get('repair_merge_source', 0) %}
+                        {% set suppression_observation_count = source_observation_counts.get('repair_suppression', 0) %}
+                        {% set merge_observation_count = source_observation_counts.get('repair_merge_source', 0) %}
+                        {% set approved_name = proposal.mapping.get('approved_name') or proposal.mapping.get('approved_name_key') or proposal.hint_label or proposal.summary %}
+                        {% set approved_category = proposal.mapping.get('approved_category') or proposal.pattern.get('pattern_kind') or proposal.suggested_action or 'Unknown' %}
+                        {% set is_seeded_proposal = proposal.is_seeded_proposal %}
+                        {% set below_auto_threshold = proposal.below_auto_threshold %}
+
+                        <article class="proposal-card" id="proposal-{{ proposal.id }}">
+                            <div class="proposal-header">
+                                <div class="proposal-top">
+                                    <div>
+                                        <h3 class="proposal-title">{{ approved_name }}</h3>
+                                        <div class="proposal-subtitle">
+                                            {{ proposal.merchant_scope or "Unknown merchant" }} · {{ approved_category }}
+                                        </div>
+                                    </div>
+
+                                    <div class="badge-row">
+                                        {% if is_mapping %}
+                                            <span class="badge badge-soft">Exact Mapping</span>
+                                        {% elif is_alias %}
+                                            <span class="badge badge-soft">Alias Bundle</span>
+                                        {% elif is_suppression %}
+                                            <span class="badge badge-soft">Suppression Pattern</span>
+                                        {% else %}
+                                            <span class="badge badge-soft">{{ proposal.proposal_type }}</span>
+                                        {% endif %}
+
+                                        {% if status_value == 'approved' %}
+                                            <span class="badge badge-success">Approved</span>
+                                        {% elif status_value == 'rejected' %}
+                                            <span class="badge badge-danger">Rejected</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">Pending</span>
+                                        {% endif %}
+
+                                        {% if confidence_value == 'high' %}
+                                            <span class="badge badge-success">Confidence: {{ confidence_value }}</span>
+                                        {% elif confidence_value == 'medium' %}
+                                            <span class="badge badge-soft">Confidence: {{ confidence_value }}</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">Confidence: {{ confidence_value }}</span>
+                                        {% endif %}
+                                        {% if is_suppression %}
+                                            {% if is_seeded_proposal %}
+                                                <span class="badge badge-soft">Analyst-Seeded</span>
+                                            {% else %}
+                                                <span class="badge badge-soft">Auto-Surfaced</span>
+                                            {% endif %}
+                                            {% if below_auto_threshold %}
+                                                <span class="badge badge-warning">Below Auto Threshold</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="proposal-body">
+                                <div class="proposal-grid">
+                                    <div class="panel">
+                                        {% if is_mapping %}
+                                            <h4>Receipt text seen</h4>
+                                            <ul class="plain-list">
+                                                <li>{{ proposal.mapping.get('raw_key') or "-" }}</li>
+                                            </ul>
+                                        {% elif is_alias %}
+                                            <h4>Observed raw variants</h4>
+                                            <ul class="plain-list">
+                                                {% for raw_variant in proposal.raw_variants %}
+                                                    <li>{{ raw_variant }}</li>
+                                                {% endfor %}
+                                            </ul>
+
+                                            {% if proposal.normalized_variants and proposal.normalized_variants|length > 1 %}
+                                                <h4 style="margin-top: 12px;">Observed normalized variants</h4>
+                                                <ul class="plain-list">
+                                                    {% for normalized_variant in proposal.normalized_variants %}
+                                                        <li>{{ normalized_variant }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% elif is_suppression %}
+                                            <h4>Observed fragment variants</h4>
+                                            <ul class="plain-list">
+                                                {% for raw_variant in proposal.raw_variants %}
+                                                    <li>{{ raw_variant }}</li>
+                                                {% endfor %}
+                                            </ul>
+
+                                            <h4 style="margin-top: 12px;">Runtime hint</h4>
+                                            <p>
+                                                {{ proposal.hint_label or 'Likely fragment line' }}
+                                                {% if proposal.suggested_action %}
+                                                    · Suggested action: {{ proposal.suggested_action }}
+                                                {% endif %}
+                                            </p>
+
+                                            <h4 style="margin-top: 12px;">Evidence sources</h4>
+                                            <ul class="plain-list">
+                                                {% if suppression_receipt_count or suppression_observation_count %}
+                                                    <li>Manual suppressions · receipts: {{ suppression_receipt_count }} · observations: {{ suppression_observation_count }}</li>
+                                                {% endif %}
+                                                {% if merge_receipt_count or merge_observation_count %}
+                                                    <li>Merge-source fragments · receipts: {{ merge_receipt_count }} · observations: {{ merge_observation_count }}</li>
+                                                {% endif %}
+                                                {% if not (suppression_receipt_count or suppression_observation_count or merge_receipt_count or merge_observation_count) %}
+                                                    <li>Legacy suppression evidence</li>
+                                                {% endif %}
+                                            </ul>
+
+                                            {% if is_seeded_proposal and below_auto_threshold %}
+                                                <h4 style="margin-top: 12px;">Threshold note</h4>
+                                                <p>
+                                                    Seeded below the current automatic threshold.
+                                                    {% if proposal.receipt_shortfall %}
+                                                        Needs {{ proposal.receipt_shortfall }} more distinct receipt(s)
+                                                    {% endif %}
+                                                    {% if proposal.receipt_shortfall and proposal.artifact_shortfall %}
+                                                        and
+                                                    {% endif %}
+                                                    {% if proposal.artifact_shortfall %}
+                                                        {{ proposal.artifact_shortfall }} more artifact(s)
+                                                    {% endif %}
+                                                    for automatic surfacing at the current threshold.
+                                                </p>
+                                            {% endif %}
+                                        {% else %}
+                                            <h4>Proposal detail</h4>
+                                            <p>{{ proposal.summary }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="panel">
+                                        <h4>Why this was proposed</h4>
+                                        {% if is_mapping %}
+                                            <p>
+                                                This exact receipt text repeatedly resolved to the same approved item and category,
+                                                so the system surfaced it as a conservative reusable mapping.
+                                            </p>
+                                        {% elif is_alias %}
+                                            <p>
+                                                Different receipt text variants repeatedly converged to the same approved item and
+                                                category, so the system surfaced them as an alias bundle for human review.
+                                            </p>
+                                        {% elif is_suppression %}
+                                            {% if is_seeded_proposal %}
+                                                <p>
+                                                    An analyst promoted this recognized fragment family into governed review using real
+                                                    repair evidence.
+                                                    {% if below_auto_threshold %}
+                                                        At the time it was seeded, it was still below the automatic proposal threshold.
+                                                    {% else %}
+                                                        It had already accumulated enough evidence to stand on its own, but was still
+                                                        deliberately promoted through the governed path.
+                                                    {% endif %}
+                                                </p>
+                                            {% else %}
+                                                <p>
+                                                    Repeated repair evidence—manual suppressions and/or merge-source fragment rows—converged
+                                                    on the same structural line signature, so the system surfaced this as a governed
+                                                    runtime repair hint before OpenClaw.
+                                                </p>
+                                            {% endif %}
+                                        {% else %}
+                                            <p>
+                                                Repeated approved evidence surfaced this proposal as a candidate for governed reuse.
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="evidence-grid">
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Receipts</div>
+                                        <div class="mini-stat-value">{{ evidence_receipts }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Artifacts</div>
+                                        <div class="mini-stat-value">{{ evidence_artifacts }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Evidence Observations</div>
+                                        <div class="mini-stat-value">{{ evidence_observations }}</div>
+                                    </div>
+
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">{% if is_alias or is_suppression %}Raw Variants{% else %}Proposal Type{% endif %}</div>
+                                        <div class="mini-stat-value">
+                                            {% if is_alias or is_suppression %}
+                                                {{ raw_variant_count }}
+                                            {% elif is_mapping %}
+                                                Exact
+                                            {% else %}
+                                                {{ proposal.proposal_type }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="runtime-effect">
+                                    <strong>Runtime effect:</strong>
+                                    {% if is_suppression %}
+                                        Once approved, this pattern can flag similar fragment lines locally as suggested suppress
+                                        before OpenClaw, without silently deleting anything.
+                                    {% else %}
+                                        Once approved, this pattern can be reused during future review to resolve similar receipt text
+                                        earlier in the loop and reduce unnecessary AI calls.
+                                    {% endif %}
+                                </div>
+
+                                <div class="proposal-footer">
+                                    {% if status_value == 'pending' %}
+                                        <form method="post" action="/learning/proposals/{{ proposal.id }}/approve">
+                                            <button type="submit" class="btn btn-success">Approve Proposal</button>
+                                        </form>
+
+                                        <form method="post" action="/learning/proposals/{{ proposal.id }}/reject">
+                                            <button type="submit" class="btn btn-danger">Reject Proposal</button>
+                                        </form>
+                                    {% elif status_value == 'approved' %}
+                                        <span class="state-note">Approved and available for runtime reuse.</span>
+                                    {% else %}
+                                        <span class="state-note">Rejected and not active at runtime.</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No proposals in the current view</h3>
+                    <p>
+                        That usually means the current evidence is either too sparse, too inconsistent, or not yet repeated enough
+                        across distinct receipts and artifacts to justify a conservative reusable bundle.
+                    </p>
+
+                    <div class="badge-row">
+                        <span class="badge badge-soft">Ready candidates: {{ candidate_summary.ready_count or 0 }}</span>
+                        <span class="badge badge-warning">Needs more confirmations: {{ candidate_summary.needs_more_count or 0 }}</span>
+                        <span class="badge badge-danger">Conflicts: {{ candidate_summary.conflict_count or 0 }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Recent Evidence-to-Knowledge Examples</h2>
+            <p class="section-subtitle">
+                These examples show how approved outcomes are being converted into reusable evidence, including cases where accepted OpenClaw suggestions became governed runtime knowledge.
+            </p>
+
+            {% if recent_observations %}
+                <div class="example-grid">
+                    {% for row in recent_observations[:6] %}
+                        <div class="example-card">
+                            <div>
+                                <h3>{{ row.normalized_value or "Approved item" }}</h3>
+                                <div class="example-meta">
+                                    {{ row.merchant_key or "Unknown merchant" }} · Receipt {{ row.receipt_id or "-" }}
+                                </div>
+                            </div>
+
+                            <div class="example-row">
+                                <div class="example-label">Receipt text seen</div>
+                                <div class="example-value">{{ row.raw_key or "-" }}</div>
+                            </div>
+
+                            <div class="example-row">
+                                <div class="example-label">Approved item name</div>
+                                <div class="example-value">{{ row.normalized_value or "-" }}</div>
+                            </div>
+
+                            <div class="example-row">
+                                <div class="example-label">Approved category</div>
+                                <div class="example-value">{{ row.category_value or "-" }}</div>
+                            </div>
+
+                            <div class="badge-row">
+                                <span class="badge badge-soft">Learning source: Approved observation</span>
+                                {% if row.ai_backed %}
+                                    <span class="badge badge-primary">AI-backed</span>
+                                {% endif %}
+                            </div>
+
+                            {% if row.ai_backed %}
+                                <div class="example-row">
+                                    <div class="example-label">AI lane / strategy</div>
+                                    <div class="example-value">
+                                        {{ row.ai_lane_label or 'OpenClaw lane' }}
+                                        {% if row.ai_model_label %} · {{ row.ai_model_label }}{% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <div class="muted" style="font-size: 0.92rem; line-height: 1.5;">
+                                {% if row.ai_backed %}
+                                    This approved result retained an OpenClaw contribution and is now stored as reusable evidence for future proposal generation and runtime reuse.
+                                {% else %}
+                                    This correction is now stored as reusable evidence for future proposal generation and runtime reuse.
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No recent evidence examples yet</h3>
+                    <p>
+                        Approve and correct a few receipts to start building reusable evidence that can later become governed proposals.
+                    </p>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Diagnostics and Evidence Detail</h2>
+            <p class="section-subtitle">
+                These lower-level views are kept for operator confidence and validation, but they are intentionally secondary to the
+                higher-level learning story above.
+            </p>
+
+            <details open>
+                <summary>Candidate Rollups</summary>
+                <div class="detail-body">
+                    <div class="badge-row" style="margin-bottom: 14px;">
+                        <span class="badge badge-soft">Ready: {{ candidate_summary.ready_count or 0 }}</span>
+                        <span class="badge badge-warning">Needs More Confirmations: {{ candidate_summary.needs_more_count or 0 }}</span>
+                        <span class="badge badge-danger">Conflict: {{ candidate_summary.conflict_count or 0 }}</span>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Merchant</th>
+                                    <th>Receipt Text Seen</th>
+                                    <th>Approved Name</th>
+                                    <th>Category</th>
+                                    <th>Evidence Receipts</th>
+                                    <th>Evidence Artifacts</th>
+                                    <th>State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if candidate_rollups %}
+                                    {% for row in candidate_rollups %}
+                                        <tr>
+                                            <td>{{ row.merchant_key or "-" }}</td>
+                                            <td>{{ row.raw_key or "-" }}</td>
+                                            <td>{{ row.approved_name or "-" }}</td>
+                                            <td>{{ row.approved_category or "-" }}</td>
+                                            <td>{{ row.distinct_receipt_count or 0 }}</td>
+                                            <td>{{ row.distinct_artifact_count or 0 }}</td>
+                                            <td>{{ row.state_reason or row.state or "-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="muted">No candidate rollups available yet.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </details>
+
+            <details style="margin-top: 14px;">
+                <summary>Recent Observed Learning Rows</summary>
+                <div class="detail-body">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Receipt</th>
+                                    <th>Merchant</th>
+                                    <th>Receipt Text Seen</th>
+                                    <th>Approved Item Name</th>
+                                    <th>Category</th>
+                                    <th>Recorded</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_observations %}
+                                    {% for row in recent_observations %}
+                                        <tr>
+                                            <td>{{ row.id }}</td>
+                                            <td>{{ row.receipt_id or "-" }}</td>
+                                            <td>{{ row.merchant_key or "-" }}</td>
+                                            <td>{{ row.raw_key or "-" }}</td>
+                                            <td>{{ row.normalized_value or "-" }}</td>
+                                            <td>{{ row.category_value or "-" }}</td>
+                                            <td>{{ row.created_at or row.updated_at or "-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="muted">No observed learning rows available yet.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <div class="footer-links">
+            <a href="/">Home</a> ·
+            <a href="/receipts">Receipts</a> ·
+            <a href="/analytics">Analytics</a> ·
+            <a href="/upload">Upload another receipt</a>
+        </div>
+    </div>
+</body>
+</html>

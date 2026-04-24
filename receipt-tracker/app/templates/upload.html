@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Upload Receipt - Receipt Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --panel: #ffffff;
+            --panel-alt: #f8faff;
+            --text: #162033;
+            --muted: #607089;
+            --border: #dbe3ef;
+            --accent: #405cf5;
+            --success: #177245;
+            --warning: #9a6700;
+            --shadow: 0 10px 30px rgba(18, 36, 79, 0.08);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+        html { color-scheme: light; }
+
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #f8f9fd 0%, #f2f5fb 100%);
+            color: var(--text);
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .btn,
+        a.btn,
+        a.btn:visited,
+        button,
+        input[type="submit"],
+        input[type="button"] {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+            padding: 10px 14px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--border) !important;
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #172033 !important;
+            -webkit-text-fill-color: #172033 !important;
+            text-decoration: none !important;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            letter-spacing: 0 !important;
+            text-indent: 0 !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+            filter: none !important;
+            white-space: nowrap !important;
+            cursor: pointer !important;
+            box-shadow: none !important;
+            visibility: visible !important;
+        }
+
+        .btn *,
+        a.btn *,
+        button *,
+        input[type="submit"] *,
+        input[type="button"] * {
+            color: inherit !important;
+            -webkit-text-fill-color: inherit !important;
+        }
+
+        .btn:hover,
+        a.btn:hover,
+        button:hover,
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(24, 39, 75, 0.08) !important;
+        }
+
+        .btn:focus,
+        a.btn:focus,
+        button:focus,
+        input[type="submit"]:focus,
+        input[type="button"]:focus {
+            outline: 2px solid rgba(64, 92, 245, 0.25) !important;
+            outline-offset: 2px !important;
+        }
+
+        button::-moz-focus-inner,
+        input[type="submit"]::-moz-focus-inner,
+        input[type="button"]::-moz-focus-inner {
+            border: 0;
+            padding: 0;
+        }
+
+        .btn-primary,
+        a.btn-primary,
+        button.btn-primary,
+        input[type="submit"].btn-primary,
+        input[type="button"].btn-primary {
+            background: #eef2ff !important;
+            color: #243b8f !important;
+            -webkit-text-fill-color: #243b8f !important;
+            border-color: #cfd8ff !important;
+        }
+
+        .page {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #243b8f 0%, #405cf5 48%, #6d7cff 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 760px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.55;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+        }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 18px 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel-alt);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        label {
+            display: grid;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        input[type="file"] {
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: white;
+            font: inherit;
+        }
+
+        .helper {
+            color: var(--muted);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .notice {
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #f0d594;
+            background: #fff8e1;
+            color: #694b00;
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            background: #eef2ff;
+            color: var(--accent);
+            border: 1px solid #dbe3ff;
+        }
+
+        .pill-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        ul.clean {
+            margin: 10px 0 0 18px;
+            color: var(--muted);
+        }
+
+        ul.clean li { margin-bottom: 8px; }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.92em;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="nav">
+            <div class="brand">Receipt Tracker</div>
+            <div class="nav-links">
+                <a class="btn" href="/">Home</a>
+                <a class="btn" href="/upload">Upload</a>
+                <a class="btn" href="/receipts">Receipts</a>
+                <a class="btn" href="/analytics">Analytics</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h1>Upload an evidence artifact</h1>
+            <p>
+                Use one upload path. The intake router inspects the file, identifies the safest supported parser,
+                and sends the artifact into the same governed review and learning loop behind the scenes.
+            </p>
+        </div>
+
+        {% if notice %}
+        <div class="notice">{{ notice }}</div>
+        {% endif %}
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Unified Intake</h2>
+                </div>
+                <div class="card-body">
+                    <div class="pill-row">
+                        <span class="pill">Auto-detect</span>
+                        <span class="pill">One front door</span>
+                        <span class="pill">Governed review</span>
+                    </div>
+
+                    <form action="/upload" method="post" enctype="multipart/form-data" class="form-grid">
+                        <label>
+                            Select a receipt image, saved HTML receipt page, or PDF artifact
+                            <input
+                                type="file"
+                                name="receipt_file"
+                                accept="image/*,.jpg,.jpeg,.jfif,.png,.webp,.bmp,.gif,.tif,.tiff,.pdf,.html,.htm,application/pdf,text/html"
+                                required
+                            >
+                        </label>
+
+                        <p class="helper">
+                            Supported file types include <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>,
+                            <code>.webp</code>, <code>.bmp</code>, <code>.gif</code>, <code>.tif</code>, <code>.tiff</code>,
+                            <code>.pdf</code>, <code>.html</code>, and <code>.htm</code>.
+                        </p>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary">Upload Artifact</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>How routing works</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="clean">
+                        <li>The router inspects the uploaded object instead of asking the user to pick a parser.</li>
+                        <li>Known structured sources, like BJ's saved HTML, go to deterministic adapters before any AI escalation.</li>
+                        <li>Receipt images stay on the OCR-first path.</li>
+                        <li>All supported uploads still land in canonical artifact packages under <code>data/artifacts/</code>.</li>
+                    </ul>
+
+                    <p class="helper">
+                        This keeps the human-facing upload UX simple while letting new parsers, connectors, and evidence adapters
+                        plug into the same governed loop later.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

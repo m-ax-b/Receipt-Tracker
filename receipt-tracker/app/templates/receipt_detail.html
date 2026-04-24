@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Receipt {{ receipt.id }} - Receipt Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --panel: #ffffff;
+            --panel-alt: #f9fafc;
+            --text: #172033;
+            --muted: #5f6b85;
+            --border: #dbe1ea;
+            --accent: #405cf5;
+            --accent-soft: #eef2ff;
+            --success: #177245;
+            --success-soft: #eaf8f0;
+            --warning: #9a6700;
+            --warning-soft: #fff6df;
+            --danger: #b42318;
+            --danger-soft: #fff0ef;
+            --shadow: 0 8px 28px rgba(19, 33, 68, 0.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+        html { color-scheme: light; scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #f8f9fd 0%, #f1f4fa 100%);
+            color: var(--text);
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .btn,
+        a.btn,
+        a.btn:visited,
+        button,
+        input[type="submit"],
+        input[type="button"] {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+            padding: 10px 14px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--border) !important;
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #172033 !important;
+            -webkit-text-fill-color: #172033 !important;
+            text-decoration: none !important;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            letter-spacing: 0 !important;
+            text-indent: 0 !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+            filter: none !important;
+            white-space: nowrap !important;
+            cursor: pointer !important;
+            box-shadow: none !important;
+            visibility: visible !important;
+        }
+
+        .btn *,
+        a.btn *,
+        button *,
+        input[type="submit"] *,
+        input[type="button"] * {
+            color: inherit !important;
+            -webkit-text-fill-color: inherit !important;
+        }
+
+        .btn:hover,
+        a.btn:hover,
+        button:hover,
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(24, 39, 75, 0.08) !important;
+        }
+
+        .btn:focus,
+        a.btn:focus,
+        button:focus,
+        input[type="submit"]:focus,
+        input[type="button"]:focus {
+            outline: 2px solid rgba(64, 92, 245, 0.25) !important;
+            outline-offset: 2px !important;
+        }
+
+        .btn[disabled],
+        button[disabled],
+        input[type="submit"][disabled],
+        input[type="button"][disabled] {
+            opacity: 0.45 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        button::-moz-focus-inner,
+        input[type="submit"]::-moz-focus-inner,
+        input[type="button"]::-moz-focus-inner {
+            border: 0;
+            padding: 0;
+        }
+
+        .btn-primary,
+        a.btn-primary,
+        button.btn-primary,
+        input[type="submit"].btn-primary,
+        input[type="button"].btn-primary {
+            background: #eef2ff !important;
+            color: #243b8f !important;
+            -webkit-text-fill-color: #243b8f !important;
+            border-color: #cfd8ff !important;
+        }
+
+        .btn-success,
+        a.btn-success,
+        button.btn-success,
+        input[type="submit"].btn-success,
+        input[type="button"].btn-success {
+            background: #eaf8f0 !important;
+            color: #177245 !important;
+            -webkit-text-fill-color: #177245 !important;
+            border-color: #caebd8 !important;
+        }
+
+        .btn-danger,
+        a.btn-danger,
+        button.btn-danger,
+        input[type="submit"].btn-danger,
+        input[type="button"].btn-danger {
+            background: #fff0ef !important;
+            color: #b42318 !important;
+            -webkit-text-fill-color: #b42318 !important;
+            border-color: #f2c8c5 !important;
+        }
+
+        .btn-soft,
+        a.btn-soft,
+        button.btn-soft,
+        input[type="submit"].btn-soft,
+        input[type="button"].btn-soft {
+            background: #f5f7ff !important;
+            color: #405cf5 !important;
+            -webkit-text-fill-color: #405cf5 !important;
+            border-color: #d7e1ff !important;
+        }
+
+        .btn-small,
+        a.btn-small,
+        button.btn-small,
+        input[type="submit"].btn-small,
+        input[type="button"].btn-small {
+            min-height: 36px !important;
+            padding: 8px 10px !important;
+            border-radius: 10px !important;
+            font-size: 13px !important;
+        }
+
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 24px 260px 24px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #243b8f 0%, #405cf5 45%, #6c7cff 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            margin: 0;
+            color: rgba(255,255,255,0.86);
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 340px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 18px 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel-alt);
+        }
+
+        .card-header h2,
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .stack {
+            display: grid;
+            gap: 20px;
+        }
+
+        .meta-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .meta-row {
+            display: grid;
+            gap: 4px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .meta-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .meta-value {
+            font-size: 0.98rem;
+            word-break: break-word;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .badge-status {
+            background: rgba(255,255,255,0.16);
+            color: white;
+            border-color: rgba(255,255,255,0.22);
+        }
+
+        .badge-soft {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: #dbe4ff;
+        }
+
+        .badge-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: #caebd8;
+        }
+
+        .badge-warning {
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: #f4df9f;
+        }
+
+        .badge-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: #f4c7c3;
+        }
+
+        .notice,
+        .error {
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .notice {
+            background: var(--accent-soft);
+            color: #263b9f;
+            border: 1px solid #d7e1ff;
+        }
+
+        .error {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #f2c8c5;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .summary-grid { grid-template-columns: 1fr; }
+        }
+
+        .stat {
+            background: var(--panel-alt);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.84rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .attention-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .attention-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: var(--warning-soft);
+            border: 1px solid #f4df9f;
+            color: var(--warning);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .attention-link:hover {
+            text-decoration: none;
+            background: #ffefc7;
+        }
+
+        .receipt-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field-grid.two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (max-width: 700px) {
+            .field-grid.two { grid-template-columns: 1fr; }
+        }
+
+        label {
+            display: grid;
+            gap: 6px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font: inherit;
+            background: white;
+            color: var(--text);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #405cf5;
+            cursor: pointer;
+        }
+
+        details {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--panel-alt);
+            overflow: hidden;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 14px 16px;
+            font-weight: 800;
+            list-style: none;
+        }
+
+        summary::-webkit-details-marker { display: none; }
+
+        .pre-wrap {
+            margin: 0;
+            padding: 0 16px 16px 16px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.9rem;
+            color: #263148;
+        }
+
+        .items-stack {
+            display: grid;
+            gap: 18px;
+        }
+
+        .item-card {
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            scroll-margin-top: 24px;
+        }
+
+        .item-card.flash-focus {
+            outline: 3px solid rgba(64, 92, 245, 0.2);
+            box-shadow: 0 0 0 6px rgba(64, 92, 245, 0.08), var(--shadow);
+        }
+
+        .item-header {
+            padding: 16px 18px 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #fcfdff 0%, #f7f9fd 100%);
+        }
+
+        .item-header-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .item-title {
+            margin: 0 0 6px 0;
+            font-size: 1.05rem;
+        }
+
+        .item-subtitle {
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        .item-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .repair-checkbox-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #f5f7ff;
+            border: 1px solid #d7e1ff;
+            color: #405cf5;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .item-body {
+            padding: 18px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .item-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .item-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 560px) {
+            .item-meta-grid { grid-template-columns: 1fr; }
+        }
+
+        .mini-stat {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--panel-alt);
+        }
+
+        .mini-stat-label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .mini-stat-value {
+            font-size: 0.98rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .suggestion-box {
+            border: 1px solid #d8e2ff;
+            background: linear-gradient(180deg, #f7f9ff 0%, #eef3ff 100%);
+            border-radius: 16px;
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: #243b8f;
+        }
+
+        .suggestion-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .suggestion-grid { grid-template-columns: 1fr; }
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .helper {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .muted { color: var(--muted); }
+
+        .section-title {
+            margin: 0 0 12px 0;
+            font-size: 1.1rem;
+        }
+
+        .footer-links {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .suppressed-list {
+            display: grid;
+            gap: 12px;
+            padding: 0 16px 16px 16px;
+        }
+
+        .suppressed-card {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: white;
+        }
+
+        .suppressed-title {
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .floating-repair-dock {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            width: min(980px, calc(100vw - 24px));
+            z-index: 90;
+        }
+
+        .floating-repair-bar {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 14px 34px rgba(19, 33, 68, 0.16);
+            padding: 14px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .repair-summary {
+            display: grid;
+            gap: 10px;
+        }
+
+        .repair-summary-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .repair-summary-main {
+            display: grid;
+            gap: 4px;
+            min-width: 220px;
+            flex: 1;
+        }
+
+        .repair-summary-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .repair-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .repair-panel {
+            display: none;
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .repair-panel.active {
+            display: block;
+        }
+
+        .repair-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .repair-panel-header .helper {
+            margin-top: 4px;
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .selected-lines-note {
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .section-spacer {
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                padding: 18px 18px 300px 18px;
+            }
+
+            .floating-repair-dock {
+                width: calc(100vw - 16px);
+                bottom: 8px;
+            }
+
+            .floating-repair-bar {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set ns = namespace(review_count=0, suggestion_count=0) %}
+    {% for item in items %}
+        {% if item.needs_review %}
+            {% set ns.review_count = ns.review_count + 1 %}
+        {% endif %}
+        {% if suggestions_by_item_id.get(item.id) %}
+            {% set ns.suggestion_count = ns.suggestion_count + 1 %}
+        {% endif %}
+    {% endfor %}
+    {% set latest_run = decision_telemetry.latest_suggestion_run if decision_telemetry else None %}
+    {% set latest_approval = decision_telemetry.latest_approval_outcome if decision_telemetry else None %}
+    {% set latest_openclaw_invocations = decision_telemetry.latest_openclaw_invocations if decision_telemetry else [] %}
+
+    <div class="page">
+        <div class="nav" id="page-top">
+            <div class="brand">Receipt Tracker</div>
+            <div class="nav-links">
+                <a class="btn" href="/">Home</a>
+                <a class="btn" href="/upload">Upload</a>
+                <a class="btn" href="/receipts">Receipts</a>
+                <a class="btn" href="/analytics">Analytics</a>
+                <a class="btn btn-primary" href="/learning/proposals">Learning</a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <div class="hero-top">
+                <div>
+                    <h1>Receipt {{ receipt.id }}</h1>
+                    <p>Review parsed data, inspect provenance, add missing lines, merge or suppress fragment lines, and apply corrections without losing your place.</p>
+                </div>
+                <div class="hero-badges">
+                    <span class="badge badge-status">Status: {{ receipt.status }}</span>
+                    <span class="badge badge-status">Artifact: {{ receipt.artifact_id or "-" }}</span>
+                    <span class="badge badge-soft">Source: {{ artifact_context.source_badge_label }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if suggestion_notice %}
+            <div class="notice">{{ suggestion_notice }}</div>
+        {% endif %}
+
+        {% if suggestion_error %}
+            <div class="error">Suggestion error: {{ suggestion_error }}</div>
+        {% endif %}
+
+        <div class="grid">
+            <div class="stack">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Receipt Summary</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-grid">
+                            <div class="stat">
+                                <div class="stat-label">Merchant</div>
+                                <div class="stat-value">{{ receipt.merchant_canonical or receipt.merchant_raw or "-" }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Purchase Date</div>
+                                <div class="stat-value">{{ receipt.purchase_date or "-" }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Total</div>
+                                <div class="stat-value">{{ receipt.total if receipt.total is not none else "-" }}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Needs Review</div>
+                                <div class="stat-value">{{ ns.review_count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Receipt Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="meta-list">
+                            <div class="meta-row">
+                                <div class="meta-label">Artifact ID</div>
+                                <div class="meta-value">{{ receipt.artifact_id or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Evidence Source</div>
+                                <div class="meta-value">{{ artifact_context.source_badge_label }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Primary Artifact Path</div>
+                                <div class="meta-value">{{ receipt.image_path }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Source Type</div>
+                                <div class="meta-value">{{ artifact_context.source_type or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Artifact Kind</div>
+                                <div class="meta-value">{{ artifact_context.artifact_kind or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Primary Media Type</div>
+                                <div class="meta-value">{{ artifact_context.primary_media_type or "-" }}</div>
+                            </div>
+                            {% if artifact_context.source_page_title %}
+                                <div class="meta-row">
+                                    <div class="meta-label">Source Page Title</div>
+                                    <div class="meta-value">{{ artifact_context.source_page_title }}</div>
+                                </div>
+                            {% endif %}
+                            <div class="meta-row">
+                                <div class="meta-label">Merchant Raw</div>
+                                <div class="meta-value">{{ receipt.merchant_raw or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Merchant Canonical</div>
+                                <div class="meta-value">{{ receipt.merchant_canonical or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Purchase Time</div>
+                                <div class="meta-value">{{ receipt.purchase_time or "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Confidence</div>
+                                <div class="meta-value">{{ receipt.receipt_confidence if receipt.receipt_confidence is not none else "-" }}</div>
+                            </div>
+                            <div class="meta-row">
+                                <div class="meta-label">Review Notes</div>
+                                <div class="meta-value">{{ receipt.review_notes or "-" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="review-panel">
+                    <div class="card-header">
+                        <h2>Review Actions</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="top-actions section-spacer">
+                            <form action="/receipts/{{ receipt.id }}/suggestions" method="post">
+                                <button type="submit" class="btn btn-primary">Get Suggestions for Review Items</button>
+                            </form>
+                        </div>
+
+                        <form action="/receipts/{{ receipt.id }}/approve" method="post" class="receipt-form">
+                            <div class="field-grid two">
+                                <label>
+                                    Merchant Canonical
+                                    <input type="text" name="merchant_canonical" value="{{ receipt.merchant_canonical or receipt.merchant_raw or '' }}" required>
+                                </label>
+                                <label>
+                                    Purchase Date
+                                    <input type="date" name="purchase_date" value="{{ receipt.purchase_date or '' }}" required>
+                                </label>
+                            </div>
+
+                            <div class="field-grid two">
+                                <label>
+                                    Total
+                                    <input type="number" step="0.01" name="total" value="{{ receipt.total if receipt.total is not none else '' }}" required>
+                                </label>
+                                <div></div>
+                            </div>
+
+                            <label>
+                                Receipt Review Notes
+                                <textarea name="review_notes">{{ receipt.review_notes or '' }}</textarea>
+                            </label>
+
+                            <div class="top-actions">
+                                <button type="submit" class="btn btn-success">Approve Receipt</button>
+                            </div>
+                        </form>
+
+                        <form action="/receipts/{{ receipt.id }}/reject" method="post" class="receipt-form" style="margin-top: 14px;">
+                            <label>
+                                Reject Notes
+                                <textarea name="review_notes">{{ receipt.review_notes or 'Rejected during review.' }}</textarea>
+                            </label>
+                            <div class="top-actions">
+                                <button type="submit" class="btn btn-danger">Reject Receipt</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <details>
+                    <summary>{{ artifact_context.evidence_panel_title }}</summary>
+                    <div class="helper" style="padding: 0 16px 12px 16px;">{{ artifact_context.evidence_panel_helper }}</div>
+                    <pre class="pre-wrap">{{ receipt.ocr_text_raw or artifact_context.evidence_empty_text }}</pre>
+                </details>
+            </div>
+
+            <div class="stack">
+                <div class="card" id="items-panel">
+                    <div class="card-header">
+                        <h2>Line Items</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="helper section-spacer" style="margin-top: 0;">
+                            Use the checkboxes on each line item, then use the repair dock pinned at the bottom of the screen to merge, suppress, or add lines without leaving your working position.
+                        </p>
+
+                        {% if suggestion_stats and suggestion_stats.get('has_run') %}
+                            <div class="suggestion-box section-spacer">
+                                <div class="suggestion-header">
+                                    <div>
+                                        <div class="suggestion-title">Suggestion Run Summary</div>
+                                        <div class="helper">
+                                            {% if suggestion_stats.get('fully_covered_locally') or suggestion_stats.get('fully_covered_by_learned') %}
+                                                OpenClaw was skipped because local knowledge and repair hints already handled all review items.
+                                            {% elif suggestion_stats.get('openclaw_called') %}
+                                                OpenClaw was only called for unresolved items after local mapping checks and local repair hints.
+                                            {% else %}
+                                                No external suggestion call was needed.
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="suggestion-grid">
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Review Items</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('total_review_items', 0) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Local Mapping Hints</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('local_mapping_hints', suggestion_stats.get('learned_exact_matches', 0)) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Local Repair Hints</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('local_repair_hints', 0) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Handled Locally</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('locally_handled_before_openclaw', suggestion_stats.get('learned_exact_matches', 0)) }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="suggestion-grid">
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Sent to OpenClaw</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('remaining_for_openclaw', 0) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">OpenClaw Called</div>
+                                        <div class="mini-stat-value">
+                                            {% if suggestion_stats.get('openclaw_called') %}Yes{% else %}No{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">OpenClaw Suggestions</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('openclaw_returned', 0) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Total Suggestions Shown</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('total_suggestions_returned', 0) }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="suggestion-grid">
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">AI Lanes Used</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('openclaw_invocation_count', 0) }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Avg AI Latency</div>
+                                        <div class="mini-stat-value">{{ suggestion_stats.get('openclaw_avg_latency_ms', 0) }} ms</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Agents Used</div>
+                                        <div class="mini-stat-value">{{ (suggestion_stats.get('openclaw_agents_used') or [])|length }}</div>
+                                    </div>
+                                    <div class="mini-stat">
+                                        <div class="mini-stat-label">Model Strategies</div>
+                                        <div class="mini-stat-value">{{ (suggestion_stats.get('openclaw_model_labels') or [])|length }}</div>
+                                    </div>
+                                </div>
+
+                                {% if suggestion_stats.get('openclaw_telemetry') %}
+                                    <details>
+                                        <summary>OpenClaw routing details</summary>
+                                        <div class="suppressed-list">
+                                            {% for invocation in suggestion_stats.get('openclaw_telemetry', []) %}
+                                                <div class="suppressed-card">
+                                                    <div class="suppressed-title">{{ invocation.get('lane_label') or invocation.get('lane') or 'OpenClaw lane' }}</div>
+                                                    <div class="helper">
+                                                        Agent: <strong>{{ invocation.get('agent_id') or '-' }}</strong>
+                                                        {% if invocation.get('model_label') %} · Model: <strong>{{ invocation.get('model_label') }}</strong>{% endif %}
+                                                    </div>
+                                                    <div class="helper">
+                                                        Items sent: {{ invocation.get('item_count', 0) }}
+                                                        · Suggestions returned: {{ invocation.get('returned_count', 0) }}
+                                                        · Latency: {{ invocation.get('duration_ms', 0) }} ms
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </details>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if latest_run or latest_approval %}
+                            <div class="suggestion-box section-spacer">
+                                <div class="suggestion-header">
+                                    <div>
+                                        <div class="suggestion-title">Decision Accounting</div>
+                                        <div class="helper">
+                                            Persistent telemetry showing what stayed local, what was routed to OpenClaw,
+                                            and what the final approved outcome contributed back into reusable knowledge.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if latest_run %}
+                                    <div class="helper">
+                                        Latest recorded suggestion run for this receipt.
+                                        Local resolution rate: {{ '%.1f'|format(latest_run.local_resolution_rate_pct or 0) }}%.
+                                        Routed to OpenClaw: {{ latest_run.remaining_for_openclaw or 0 }} of {{ latest_run.total_review_items or 0 }} review item(s).
+                                    </div>
+
+                                    <div class="suggestion-grid">
+                                        {% for card in latest_run.decision_path_cards %}
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">{{ card.label }}</div>
+                                                <div class="mini-stat-value">{{ card.count }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="suggestion-grid">
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Review Items</div>
+                                            <div class="mini-stat-value">{{ latest_run.total_review_items or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Handled Locally</div>
+                                            <div class="mini-stat-value">{{ latest_run.locally_handled_before_openclaw or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">OpenClaw Returned</div>
+                                            <div class="mini-stat-value">{{ latest_run.openclaw_returned or 0 }}</div>
+                                        </div>
+                                    </div>
+
+                                    {% if latest_openclaw_invocations %}
+                                        <div class="suggestion-header">
+                                            <div>
+                                                <div class="suggestion-title">Latest OpenClaw Routing</div>
+                                                <div class="helper">
+                                                    This shows how unresolved items were split into explicit AI lanes, along with the agent and model strategy used for each invocation.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="suggestion-grid">
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">AI Invocations</div>
+                                                <div class="mini-stat-value">{{ latest_run.openclaw_invocation_count or (latest_openclaw_invocations|length) }}</div>
+                                            </div>
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">Avg AI Latency</div>
+                                                <div class="mini-stat-value">{{ latest_run.openclaw_avg_latency_ms or 0 }} ms</div>
+                                            </div>
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">Agents Used</div>
+                                                <div class="mini-stat-value">{{ (latest_run.openclaw_agents_used or [])|length }}</div>
+                                            </div>
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">Model Strategies</div>
+                                                <div class="mini-stat-value">{{ (latest_run.openclaw_model_labels or [])|length }}</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="suggestion-grid">
+                                            {% for lane_card in latest_run.openclaw_lane_cards %}
+                                                <div class="mini-stat">
+                                                    <div class="mini-stat-label">{{ lane_card.label }}</div>
+                                                    <div class="mini-stat-value">{{ lane_card.item_count }}</div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <details>
+                                            <summary>Latest OpenClaw invocation details</summary>
+                                            <div class="suppressed-list">
+                                                {% for invocation in latest_openclaw_invocations %}
+                                                    <div class="suppressed-card">
+                                                        <div class="suppressed-title">{{ invocation.lane_label or invocation.lane or 'OpenClaw lane' }}</div>
+                                                        <div class="helper">
+                                                            Agent: <strong>{{ invocation.agent_id or '-' }}</strong>
+                                                            {% if invocation.model_label %} · Model: <strong>{{ invocation.model_label }}</strong>{% endif %}
+                                                            {% if invocation.request_model %} · Request Model: {{ invocation.request_model }}{% endif %}
+                                                        </div>
+                                                        <div class="helper">
+                                                            Items sent: {{ invocation.item_count or 0 }}
+                                                            · Suggestions returned: {{ invocation.returned_count or 0 }}
+                                                            · Latency: {{ invocation.duration_ms or 0 }} ms
+                                                            · Status: {% if invocation.success %}<strong>success</strong>{% else %}<strong>failed</strong>{% endif %}
+                                                        </div>
+                                                        {% if invocation.error_message %}
+                                                            <div class="helper">Error: {{ invocation.error_message }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </details>
+                                    {% endif %}
+
+                                    {% if latest_run.line_decisions %}
+                                        <details>
+                                            <summary>Latest line decision paths</summary>
+                                            <div class="suppressed-list">
+                                                {% for entry in latest_run.line_decisions[:12] %}
+                                                    <div class="suppressed-card">
+                                                        <div class="suppressed-title">Line {{ entry.line_number }} · {{ entry.decision_label }}</div>
+                                                        <div class="helper">{{ entry.item_text_raw or '-' }}</div>
+                                                        <div class="helper">
+                                                            Source: <strong>{{ entry.source_label }}</strong>
+                                                            {% if entry.openclaw_lane_label %} · Lane: {{ entry.openclaw_lane_label }}{% endif %}
+                                                            {% if entry.openclaw_model_label %} · Model: {{ entry.openclaw_model_label }}{% endif %}
+                                                            {% if entry.suggested_action %} · Action: {{ entry.suggested_action }}{% endif %}
+                                                            {% if entry.suggested_name %} · Name: {{ entry.suggested_name }}{% endif %}
+                                                            {% if entry.suggested_category %} · Category: {{ entry.suggested_category }}{% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </details>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if latest_approval %}
+                                    <div class="suggestion-header">
+                                        <div>
+                                            <div class="suggestion-title">Latest Approved Outcome</div>
+                                            <div class="helper">
+                                                Human approval remained the trust boundary. This snapshot summarizes the final
+                                                receipt shape, repair burden, AI effectiveness, and knowledge captured back into reusable evidence.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="suggestion-grid">
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Active Lines</div>
+                                            <div class="mini-stat-value">{{ latest_approval.active_item_count or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Suppressed Lines</div>
+                                            <div class="mini-stat-value">{{ latest_approval.suppressed_item_count or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Human Repair Actions</div>
+                                            <div class="mini-stat-value">{{ latest_approval.human_repair_action_count or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Knowledge Captured</div>
+                                            <div class="mini-stat-value">{{ latest_approval.knowledge_captured_count or 0 }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="suggestion-grid">
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">AI-Touched Items</div>
+                                            <div class="mini-stat-value">{{ latest_approval.ai_touched_item_count or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">AI → Knowledge</div>
+                                            <div class="mini-stat-value">{{ latest_approval.ai_learning_item_count or 0 }}</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">AI Learning Share</div>
+                                            <div class="mini-stat-value">{{ '%.1f'|format(latest_approval.ai_learning_capture_rate_pct or 0) }}%</div>
+                                        </div>
+                                        <div class="mini-stat">
+                                            <div class="mini-stat-label">Repaired After AI</div>
+                                            <div class="mini-stat-value">{{ latest_approval.ai_repaired_after_item_count or 0 }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="helper" style="margin-top: 6px;">
+                                        AI acceptance rate: {{ '%.1f'|format(latest_approval.ai_acceptance_rate_pct or 0) }}%.
+                                        Accepted AI outcomes captured back into reusable approved observations: {{ latest_approval.ai_learning_item_count or 0 }} of {{ latest_approval.knowledge_captured_count or 0 }} ({{ '%.1f'|format(latest_approval.ai_learning_capture_rate_pct or 0) }}%).
+                                        These approval-aligned metrics reflect whether AI suggestions survived the final human-governed outcome,
+                                        not just whether the model returned a response.
+                                    </div>
+
+                                    <div class="suggestion-grid">
+                                        {% for card in latest_approval.repair_action_cards %}
+                                            <div class="mini-stat">
+                                                <div class="mini-stat-label">{{ card.label }}</div>
+                                                <div class="mini-stat-value">{{ card.count }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                    {% if latest_approval.ai_touched_item_count %}
+                                        <details>
+                                            <summary>AI effectiveness by lane</summary>
+                                            <div class="suggestion-grid" style="margin-top: 12px;">
+                                                {% for card in latest_approval.ai_lane_cards %}
+                                                    {% if card.touched or card.accepted or card.repaired_after %}
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">{{ card.label }}</div>
+                                                            <div class="mini-stat-value">{{ card.accepted }}/{{ card.touched }}</div>
+                                                            <div class="helper">
+                                                                Accepted {{ '%.1f'|format(card.acceptance_rate_pct or 0) }}%
+                                                                · No-repair {{ card.no_repair }}
+                                                                · Repaired after AI {{ card.repaired_after }}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </details>
+                                    {% endif %}
+
+                                    {% if latest_approval.ai_learning_item_count %}
+                                        <details>
+                                            <summary>AI → knowledge by lane and model strategy</summary>
+                                            <div class="suggestion-grid" style="margin-top: 12px;">
+                                                {% for card in latest_approval.ai_learning_lane_cards %}
+                                                    {% if card.captured %}
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">{{ card.label }}</div>
+                                                            <div class="mini-stat-value">{{ card.captured }}</div>
+                                                            <div class="helper">
+                                                                Knowledge share {{ '%.1f'|format(card.capture_share_pct or 0) }}%
+                                                                · No-repair {{ card.no_repair }}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+
+                                            {% if latest_approval.ai_learning_strategy_cards %}
+                                                <div class="suppressed-list" style="margin-top: 12px;">
+                                                    {% for card in latest_approval.ai_learning_strategy_cards %}
+                                                        <div class="suppressed-card">
+                                                            <div>
+                                                                <div class="suppressed-title">{{ card.model_label or 'OpenClaw strategy' }}</div>
+                                                                <div class="suppressed-subtitle">{{ card.subtitle }}</div>
+                                                            </div>
+                                                            <div class="suppressed-meta">
+                                                                Captured {{ card.captured }} · No-repair {{ card.no_repair }}
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </details>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if ns.review_count > 0 %}
+                            <h3 class="section-title">Attention Needed</h3>
+                            <div class="attention-list section-spacer">
+                                {% for item in items %}
+                                    {% if item.needs_review %}
+                                        <a class="attention-link" href="#item-{{ item.id }}">
+                                            Line {{ item.line_number }} · {{ item.item_text_raw[:42] }}{% if item.item_text_raw|length > 42 %}...{% endif %}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% if items %}
+                            <div class="items-stack">
+                                {% for item in items %}
+                                    {% set suggestion = suggestions_by_item_id.get(item.id) %}
+                                    <div class="item-card" id="item-{{ item.id }}">
+                                        <div class="item-header">
+                                            <div class="item-header-top">
+                                                <div>
+                                                    <h3 class="item-title">Line {{ item.line_number }} · {{ item.item_name_normalized or item.item_text_raw }}</h3>
+                                                    <div class="item-subtitle">{{ item.item_text_raw }}</div>
+                                                </div>
+                                                <div class="item-badges">
+                                                    <label class="repair-checkbox-wrap">
+                                                        <input
+                                                            type="checkbox"
+                                                            class="repair-select"
+                                                            value="{{ item.id }}"
+                                                            data-line="{{ item.line_number }}"
+                                                            onchange="syncRepairSelections();"
+                                                        >
+                                                        Select
+                                                    </label>
+
+                                                    {% if item.needs_review %}
+                                                        <span class="badge badge-warning">Needs Review</span>
+                                                    {% else %}
+                                                        <span class="badge badge-success">Looks Good</span>
+                                                    {% endif %}
+
+                                                    {% if item.category %}
+                                                        <span class="badge badge-soft">{{ item.category }}</span>
+                                                    {% endif %}
+
+                                                    {% if item.category_source_raw %}
+                                                        <span class="badge badge-soft">Section: {{ item.category_source_raw }}</span>
+                                                    {% endif %}
+
+                                                    {% if item.source_item_code %}
+                                                        <span class="badge badge-soft">Source Item: {{ item.source_item_code }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="item-body">
+                                            <div class="item-meta-grid">
+                                                <div class="mini-stat">
+                                                    <div class="mini-stat-label">Raw Text</div>
+                                                    <div class="mini-stat-value">{{ item.item_text_raw }}</div>
+                                                </div>
+                                                {% if item.source_item_code %}
+                                                    <div class="mini-stat">
+                                                        <div class="mini-stat-label">Source Item Code</div>
+                                                        <div class="mini-stat-value">{{ item.source_item_code }}</div>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="mini-stat">
+                                                    <div class="mini-stat-label">Normalized</div>
+                                                    <div class="mini-stat-value">{{ item.item_name_normalized or "-" }}</div>
+                                                </div>
+                                                <div class="mini-stat">
+                                                    <div class="mini-stat-label">Line Total</div>
+                                                    <div class="mini-stat-value">{{ item.line_total if item.line_total is not none else "-" }}</div>
+                                                </div>
+                                                <div class="mini-stat">
+                                                    <div class="mini-stat-label">Review Notes</div>
+                                                    <div class="mini-stat-value">{{ item.review_notes or "-" }}</div>
+                                                </div>
+                                                {% if item.source_item_detail_hint %}
+                                                    <div class="mini-stat">
+                                                        <div class="mini-stat-label">Detail Hint</div>
+                                                        <div class="mini-stat-value">{{ item.source_item_detail_hint }}</div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+
+                                            {% if suggestion %}
+                                                <div class="suggestion-box">
+                                                    <div class="suggestion-header">
+                                                        <div>
+                                                            <div class="suggestion-title">Suggested Review Help</div>
+                                                            <div class="helper">
+                                                                {% if suggestion.get('source') == 'approved_profile_mapping' %}
+                                                                    Source: <strong>Approved Profile</strong>
+                                                                    {% if suggestion.get('proposal_id') %}
+                                                                        · Proposal: <strong>#{{ suggestion.get('proposal_id') }}</strong>
+                                                                    {% endif %}
+                                                                    {% if suggestion.get('matched_observation_count') %}
+                                                                        · Evidence receipts: <strong>{{ suggestion.get('matched_observation_count') }}</strong>
+                                                                    {% endif %}
+                                                                {% elif suggestion.get('source') == 'learned_observation_exact' %}
+                                                                    Source: <strong>Learned Memory</strong>
+                                                                    {% if suggestion.get('matched_observation_count') %}
+                                                                        · Matched observations: <strong>{{ suggestion.get('matched_observation_count') }}</strong>
+                                                                    {% endif %}
+                                                                {% elif suggestion.get('source') == 'approved_suppression_pattern' %}
+                                                                    Source: <strong>Approved Suppression Pattern</strong>
+                                                                    {% if suggestion.get('proposal_id') %}
+                                                                        · Proposal: <strong>#{{ suggestion.get('proposal_id') }}</strong>
+                                                                    {% endif %}
+                                                                    {% if suggestion.get('matched_observation_count') %}
+                                                                        · Evidence receipts: <strong>{{ suggestion.get('matched_observation_count') }}</strong>
+                                                                    {% endif %}
+                                                                {% elif suggestion.get('source') == 'openclaw' %}
+                                                                    Source: <strong>OpenClaw</strong>
+                                                                {% else %}
+                                                                    Source: <strong>Suggestion Layer</strong>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                        {% if suggestion.get('confidence') %}
+                                                            <span class="badge {% if suggestion.get('confidence') == 'high' %}badge-success{% elif suggestion.get('confidence') == 'medium' %}badge-soft{% else %}badge-warning{% endif %}">
+                                                                Confidence: {{ suggestion.get('confidence') }}
+                                                            </span>
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <div class="suggestion-grid">
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">Suggested Name</div>
+                                                            <div class="mini-stat-value">{{ suggestion.get('suggested_name') or "-" }}</div>
+                                                        </div>
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">Suggested Category</div>
+                                                            <div class="mini-stat-value">{{ suggestion.get('suggested_category') or "-" }}</div>
+                                                        </div>
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">Paid Price Hint</div>
+                                                            <div class="mini-stat-value">{{ suggestion.get('paid_price_hint') if suggestion.get('paid_price_hint') is not none else "-" }}</div>
+                                                        </div>
+                                                        <div class="mini-stat">
+                                                            <div class="mini-stat-label">Suggested Action</div>
+                                                            <div class="mini-stat-value">{{ suggestion.get('suggested_action') or 'review' }}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="helper">
+                                                        {{ suggestion.get('reason') or "No reason provided." }}
+                                                    </div>
+
+                                                    <div class="helper">
+                                                        {% if suggestion.get('suggested_action') == 'suppress' %}
+                                                            This is a local repair hint only. Use the repair dock below to suppress the line if you agree. No automatic suppression occurs.
+                                                        {% else %}
+                                                            Apply buttons use the already displayed suggestion and preserve the current suggestion set without re-running OpenClaw.
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <div class="suggestion-actions">
+                                                        {% if suggestion.get('suggested_name') %}
+                                                            <form action="/receipts/{{ receipt.id }}/items/{{ item.id }}/apply-suggestion" method="post">
+                                                                <input type="hidden" name="mode" value="name">
+                                                                <input type="hidden" name="suggested_name" value="{{ (suggestion.get('suggested_name') or '')|e }}">
+                                                                <input type="hidden" name="suggested_category" value="{{ (suggestion.get('suggested_category') or '')|e }}">
+                                                                <input type="hidden" name="suggestion_source" value="{{ (suggestion.get('source') or 'suggestion')|e }}">
+                                                                <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+                                                                <button type="submit" class="btn btn-soft btn-small">Apply Name</button>
+                                                            </form>
+                                                        {% endif %}
+
+                                                        {% if suggestion.get('suggested_category') %}
+                                                            <form action="/receipts/{{ receipt.id }}/items/{{ item.id }}/apply-suggestion" method="post">
+                                                                <input type="hidden" name="mode" value="category">
+                                                                <input type="hidden" name="suggested_name" value="{{ (suggestion.get('suggested_name') or '')|e }}">
+                                                                <input type="hidden" name="suggested_category" value="{{ (suggestion.get('suggested_category') or '')|e }}">
+                                                                <input type="hidden" name="suggestion_source" value="{{ (suggestion.get('source') or 'suggestion')|e }}">
+                                                                <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+                                                                <button type="submit" class="btn btn-soft btn-small">Apply Category</button>
+                                                            </form>
+                                                        {% endif %}
+
+                                                        {% if suggestion.get('suggested_name') or suggestion.get('suggested_category') %}
+                                                            <form action="/receipts/{{ receipt.id }}/items/{{ item.id }}/apply-suggestion" method="post">
+                                                                <input type="hidden" name="mode" value="both">
+                                                                <input type="hidden" name="suggested_name" value="{{ (suggestion.get('suggested_name') or '')|e }}">
+                                                                <input type="hidden" name="suggested_category" value="{{ (suggestion.get('suggested_category') or '')|e }}">
+                                                                <input type="hidden" name="suggestion_source" value="{{ (suggestion.get('source') or 'suggestion')|e }}">
+                                                                <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+                                                                <button type="submit" class="btn btn-primary btn-small">Apply Both</button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+
+                                            <form
+                                                id="item-update-form-{{ item.id }}"
+                                                action="/receipts/{{ receipt.id }}/items/{{ item.id }}/update"
+                                                method="post"
+                                                class="receipt-form"
+                                            >
+                                                <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+
+                                                <div class="field-grid two">
+                                                    <label>
+                                                        Normalized Name
+                                                        <input
+                                                            id="item-name-{{ item.id }}"
+                                                            type="text"
+                                                            name="item_name_normalized"
+                                                            value="{{ item.item_name_normalized or '' }}"
+                                                            required
+                                                        >
+                                                    </label>
+
+                                                    <label>
+                                                        Category
+                                                        <select
+                                                            id="item-category-{{ item.id }}"
+                                                            name="category"
+                                                            required
+                                                        >
+                                                            {% for category in categories %}
+                                                                <option value="{{ category }}" {% if item.category == category %}selected{% endif %}>{{ category }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </label>
+                                                </div>
+
+                                                <div class="field-grid two">
+                                                    <label>
+                                                        Line Total
+                                                        <input type="text" name="line_total_raw" value="{{ item.line_total if item.line_total is not none else '' }}">
+                                                    </label>
+
+                                                    <label>
+                                                        Source Section
+                                                        <input type="text" value="{{ item.category_source_raw or '' }}" disabled>
+                                                    </label>
+                                                </div>
+
+                                                <label>
+                                                    Item Review Notes
+                                                    <textarea id="item-review-notes-{{ item.id }}" name="review_notes">{{ item.review_notes or '' }}</textarea>
+                                                </label>
+
+                                                <div class="top-actions">
+                                                    <button type="submit" class="btn btn-primary">Save Item</button>
+                                                    <a href="#items-panel" class="btn">Back to Items Top</a>
+                                                </div>
+                                            </form>
+
+                                            <form
+                                                action="/receipts/{{ receipt.id }}/items/{{ item.id }}/delete"
+                                                method="post"
+                                                class="receipt-form"
+                                                onsubmit="return window.confirm('Delete this line item? If this receipt is approved, the matching learned observation for this line will also be removed.');"
+                                            >
+                                                <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+
+                                                <div class="top-actions">
+                                                    <button type="submit" class="btn btn-danger btn-small">Delete Line</button>
+                                                    <span class="helper">
+                                                        Use this for obviously bogus lines when full suppression tracking is unnecessary.
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="muted">No active line items found.</p>
+                        {% endif %}
+
+                        {% if suppressed_items %}
+                            <details style="margin-top: 18px;">
+                                <summary>Suppressed Lines ({{ suppressed_items|length }})</summary>
+                                <div class="suppressed-list">
+                                    {% for item in suppressed_items %}
+                                        <div class="suppressed-card">
+                                            <div class="suppressed-title">Line {{ item.line_number }} · {{ item.item_text_raw }}</div>
+                                            <div class="helper">
+                                                Normalized: {{ item.item_name_normalized or "-" }} ·
+                                                Category: {{ item.category or "-" }} ·
+                                                Line Total: {{ item.line_total if item.line_total is not none else "-" }}
+                                            </div>
+                                            <div class="helper" style="margin-top: 6px;">
+                                                Suppression reason: {{ item.suppression_reason or "No suppression reason recorded." }}
+                                            </div>
+                                            {% if item.review_notes %}
+                                                <div class="helper" style="margin-top: 6px;">
+                                                    Review notes: {{ item.review_notes }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </details>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <a href="/receipts">Back to receipts</a> ·
+                    <a href="/analytics">Analytics</a> ·
+                    <a href="/upload">Upload another receipt</a> ·
+                    <a href="/learning/proposals">Learning proposals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-repair-dock" id="floating-repair-dock">
+        <div class="floating-repair-bar">
+            <div class="repair-summary">
+                <div class="repair-summary-top">
+                    <label class="repair-checkbox-wrap" for="repair-select-all">
+                        <input type="checkbox" id="repair-select-all" onchange="toggleAllRepairSelections(this)">
+                        Select all visible lines
+                    </label>
+
+                    <div class="repair-summary-main">
+                        <div class="suggestion-title">Repair Dock</div>
+                        <div class="helper">Pick lines as you review them, then commit merge or suppress actions here without scrolling away.</div>
+                        <div class="selected-lines-note" id="selected-line-preview">Lines: none selected</div>
+                    </div>
+
+                    <div class="repair-summary-pills">
+                        <span class="badge badge-soft">
+                            Selected:
+                            <span id="selected-line-count">0</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="repair-toolbar">
+                    <button type="button" class="btn btn-primary btn-small" id="open-merge-btn" onclick="openRepairPanel('merge')" disabled>
+                        Merge Selected
+                    </button>
+                    <button type="button" class="btn btn-danger btn-small" id="open-suppress-btn" onclick="openRepairPanel('suppress')" disabled>
+                        Suppress Selected
+                    </button>
+                    <button type="button" class="btn btn-soft btn-small" onclick="openRepairPanel('add')">
+                        Add Missing Line
+                    </button>
+                    <button type="button" class="btn btn-small" onclick="clearRepairSelections()">
+                        Clear Selection
+                    </button>
+                </div>
+            </div>
+
+            <div id="panel-merge" class="repair-panel">
+                <div class="repair-panel-header">
+                    <div>
+                        <div class="suggestion-title">Merge Selected Lines</div>
+                        <div class="helper">Create one new corrected item. Source lines will be suppressed, not deleted.</div>
+                    </div>
+                    <div class="inline-actions">
+                        <button type="button" class="btn btn-small" onclick="closeRepairPanels()">Close</button>
+                    </div>
+                </div>
+
+                <form action="/receipts/{{ receipt.id }}/items/merge-selected" method="post" class="receipt-form" onsubmit="return confirmMergeSelected();">
+                    <input type="hidden" name="selected_item_ids" class="selected-item-ids-input" value="">
+                    <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+
+                    <div class="field-grid two">
+                        <label>
+                            Merged Normalized Name
+                            <input type="text" name="item_name_normalized" placeholder="Required for merged item" required>
+                        </label>
+
+                        <label>
+                            Merged Category
+                            <select name="category" required>
+                                {% for category in categories %}
+                                    <option value="{{ category }}" {% if category == "Uncategorized" %}selected{% endif %}>{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="field-grid two">
+                        <label>
+                            Merged Line Total
+                            <input type="text" name="line_total_raw" placeholder="Optional; auto-sums existing totals when blank">
+                        </label>
+
+                        <div></div>
+                    </div>
+
+                    <label>
+                        Merge Notes
+                        <textarea name="review_notes" placeholder="Optional context for why these lines were merged"></textarea>
+                    </label>
+
+                    <div class="top-actions">
+                        <button type="submit" class="btn btn-primary">Commit Merge</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="panel-suppress" class="repair-panel">
+                <div class="repair-panel-header">
+                    <div>
+                        <div class="suggestion-title">Suppress Selected Lines</div>
+                        <div class="helper">Hide fragment lines from active review and learning without hard-deleting them.</div>
+                    </div>
+                    <div class="inline-actions">
+                        <button type="button" class="btn btn-small" onclick="closeRepairPanels()">Close</button>
+                    </div>
+                </div>
+
+                <form action="/receipts/{{ receipt.id }}/items/suppress-selected" method="post" class="receipt-form" onsubmit="return confirmSuppressSelected();">
+                    <input type="hidden" name="selected_item_ids" class="selected-item-ids-input" value="">
+                    <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+
+                    <label>
+                        Suppression Note
+                        <textarea name="suppression_note" placeholder="Optional context, for example: produce price-per-pound fragment or stray OCR row"></textarea>
+                    </label>
+
+                    <div class="top-actions">
+                        <button type="submit" class="btn btn-danger">Commit Suppression</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="panel-add" class="repair-panel">
+                <div class="repair-panel-header">
+                    <div>
+                        <div class="suggestion-title">Add Missing Line Item</div>
+                        <div class="helper">Use this when OCR or parsing skipped a line entirely. The new line is appended to the end of the receipt.</div>
+                    </div>
+                    <div class="inline-actions">
+                        <button type="button" class="btn btn-small" onclick="closeRepairPanels()">Close</button>
+                    </div>
+                </div>
+
+                <form action="/receipts/{{ receipt.id }}/items/add" method="post" class="receipt-form">
+                    <input type="hidden" name="review_token" value="{{ review_token or '' }}">
+
+                    <div class="field-grid two">
+                        <label>
+                            Raw Item Text
+                            <input type="text" name="item_text_raw" placeholder="Exactly as seen on the receipt line" required>
+                        </label>
+
+                        <label>
+                            Normalized Name
+                            <input type="text" name="item_name_normalized" placeholder="Human-corrected item name" required>
+                        </label>
+                    </div>
+
+                    <div class="field-grid two">
+                        <label>
+                            Category
+                            <select name="category" required>
+                                {% for category in categories %}
+                                    <option value="{{ category }}" {% if category == "Uncategorized" %}selected{% endif %}>{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+
+                        <label>
+                            Line Total
+                            <input type="text" name="line_total_raw" placeholder="Optional">
+                        </label>
+                    </div>
+
+                    <label>
+                        Notes
+                        <textarea name="review_notes" placeholder="Optional context, for example: parser skipped produce weighted line"></textarea>
+                    </label>
+
+                    <div class="top-actions">
+                        <button type="submit" class="btn btn-primary">Add Missing Line</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getRepairCheckboxes() {
+            return Array.prototype.slice.call(document.querySelectorAll(".repair-select"));
+        }
+
+        function getSelectedRepairIds() {
+            var boxes = getRepairCheckboxes();
+            var ids = [];
+            var i;
+
+            for (i = 0; i < boxes.length; i += 1) {
+                if (boxes[i].checked) {
+                    ids.push(String(boxes[i].value));
+                }
+            }
+
+            return ids;
+        }
+
+        function getSelectedRepairLines() {
+            var boxes = getRepairCheckboxes();
+            var lines = [];
+            var i;
+
+            for (i = 0; i < boxes.length; i += 1) {
+                if (boxes[i].checked) {
+                    lines.push(String(boxes[i].getAttribute("data-line") || ""));
+                }
+            }
+
+            return lines.filter(Boolean);
+        }
+
+        function closeRepairPanels() {
+            var panels = document.querySelectorAll(".repair-panel");
+            var i;
+
+            for (i = 0; i < panels.length; i += 1) {
+                panels[i].classList.remove("active");
+            }
+        }
+
+        function updateRepairActionState(ids, lines) {
+            var countEl = document.getElementById("selected-line-count");
+            var previewEl = document.getElementById("selected-line-preview");
+            var mergeBtn = document.getElementById("open-merge-btn");
+            var suppressBtn = document.getElementById("open-suppress-btn");
+            var hiddenInputs = document.querySelectorAll(".selected-item-ids-input");
+            var i;
+
+            if (countEl) {
+                countEl.innerHTML = String(ids.length);
+            }
+
+            if (previewEl) {
+                previewEl.innerHTML = lines.length
+                    ? "Lines: " + lines.join(", ")
+                    : "Lines: none selected";
+            }
+
+            if (mergeBtn) {
+                mergeBtn.disabled = ids.length < 2;
+            }
+
+            if (suppressBtn) {
+                suppressBtn.disabled = ids.length < 1;
+            }
+
+            for (i = 0; i < hiddenInputs.length; i += 1) {
+                hiddenInputs[i].value = ids.join(",");
+            }
+        }
+
+        function syncRepairSelections() {
+            var ids = getSelectedRepairIds();
+            var lines = getSelectedRepairLines();
+            var master = document.getElementById("repair-select-all");
+            var boxes = getRepairCheckboxes();
+
+            updateRepairActionState(ids, lines);
+
+            if (!master) {
+                return;
+            }
+
+            if (boxes.length === 0) {
+                master.checked = false;
+                master.indeterminate = false;
+                return;
+            }
+
+            if (ids.length === 0) {
+                master.checked = false;
+                master.indeterminate = false;
+            } else if (ids.length === boxes.length) {
+                master.checked = true;
+                master.indeterminate = false;
+            } else {
+                master.checked = false;
+                master.indeterminate = true;
+            }
+        }
+
+        function toggleAllRepairSelections(masterCheckbox) {
+            var shouldCheck = !!(masterCheckbox && masterCheckbox.checked);
+            var boxes = getRepairCheckboxes();
+            var i;
+
+            for (i = 0; i < boxes.length; i += 1) {
+                boxes[i].checked = shouldCheck;
+            }
+
+            syncRepairSelections();
+        }
+
+        function clearRepairSelections() {
+            var boxes = getRepairCheckboxes();
+            var i;
+
+            for (i = 0; i < boxes.length; i += 1) {
+                boxes[i].checked = false;
+            }
+
+            closeRepairPanels();
+            syncRepairSelections();
+        }
+
+        function openRepairPanel(name) {
+            var ids = getSelectedRepairIds();
+
+            if (name === "merge" && ids.length < 2) {
+                window.alert("Select at least two active lines to merge.");
+                return;
+            }
+
+            if (name === "suppress" && ids.length < 1) {
+                window.alert("Select at least one active line to suppress.");
+                return;
+            }
+
+            closeRepairPanels();
+
+            var panel = document.getElementById("panel-" + name);
+            if (panel) {
+                panel.classList.add("active");
+            }
+        }
+
+        function confirmMergeSelected() {
+            var ids = getSelectedRepairIds();
+
+            if (ids.length < 2) {
+                window.alert("Select at least two active lines to merge.");
+                return false;
+            }
+
+            return window.confirm(
+                "Merge " + ids.length + " selected line(s) into one new item? The source lines will be suppressed."
+            );
+        }
+
+        function confirmSuppressSelected() {
+            var ids = getSelectedRepairIds();
+
+            if (ids.length < 1) {
+                window.alert("Select at least one active line to suppress.");
+                return false;
+            }
+
+            return window.confirm(
+                "Suppress " + ids.length + " selected line(s)? Suppressed lines are hidden from active review and ignored by learning capture."
+            );
+        }
+
+        (function () {
+            var target = window.location.hash || "";
+
+            window.addEventListener("load", function () {
+                syncRepairSelections();
+
+                if (!target || target.indexOf("#item-") !== 0) {
+                    return;
+                }
+
+                var el = document.querySelector(target);
+                if (!el) {
+                    return;
+                }
+
+                el.classList.add("flash-focus");
+                window.setTimeout(function () {
+                    el.classList.remove("flash-focus");
+                }, 2200);
+            });
+        })();
+    </script>
+</body>
+</html>
